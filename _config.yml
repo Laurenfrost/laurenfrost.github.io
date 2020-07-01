@@ -7,13 +7,13 @@ title: Frozen Sphere
 subtitle: ''
 description: ''
 keywords:
-author: Ye 
-language: cn
+author: Ye
+language: en
 timezone: ''
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://laurenfrost.github.io
+url: https://laurenfrost.github.io
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -41,16 +41,16 @@ external_link:
   exclude: ''
 filename_case: 0
 render_drafts: false
-post_asset_folder: false
+post_asset_folder: true
 relative_link: false
 future: true
 highlight:
   enable: true
   line_number: true
   auto_detect: false
-  tab_replace: ''
+  tab_replace: '    '
   wrap: true
-  hljs: false
+  hljs: true
 
 # Home page setting
 # path: Root path for your blogs index page. (default = '')
@@ -99,5 +99,13 @@ theme: arknights
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: 'git'
-  repo: https://github.com/Laurenfrost/laurenfrost.github.io
-  brach: master
+  repo: https://github.com/Laurenfrost/laurenfrost.github.io/
+
+math:
+  engine: 'mathjax' # or 'katex'
+math.mathjax:
+    enable: true
+    per_page: true
+    src: https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML
+    cdn: //cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML    
+  # MathJax config
