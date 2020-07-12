@@ -6,7 +6,7 @@ category: 异构计算
 mathjax: true  
 ---
 
-本文的分析基于rocmBLAS的3.3.0版本，源代码的著作权属于AMD公司，其GitHub repo在https://github.com/ROCmSoftwarePlatform/rocBLAS。  
+本文的分析基于rocmBLAS的3.3.0版本，源代码的著作权属于AMD公司，其GitHub repo在https://github.com/ROCmSoftwarePlatform/rocBLAS 。  
 
 ## rocBLAS数据类型说明  
 
@@ -155,6 +155,22 @@ rocblas_status rocblas_trtri_impl(rocblas_handle   handle,
                                   T*               invA,
                                   rocblas_int      ldinvA)
 {
+```
+
+接下来则是一系列判断，确定是否相应的log模式  
+另一方面保证输入的矩阵能正常参与后续的矩阵运算  
+
+> `layer_mode`会被`auto`自动匹配成`rocblas_layer_mode`类型。  
+> ```
+> rocblas_layer_mode_none        = 0b0000000000
+> rocblas_layer_mode_log_trace   = 0b0000000001
+> rocblas_layer_mode_log_bench   = 0b0000000010
+> rocblas_layer_mode_log_profile = 0b0000000100
+> ```
+
+值得一提的是，这个函数输入的一定得是三角矩阵，不然只能返回一个`rocblas_status_not_implemented`  
+
+```c++ library/src/blas3/rocblas_trtri.cpp
     if(!handle)
         return rocblas_status_invalid_handle;
      auto layer_mode = handle->layer_mode;
@@ -184,7 +200,11 @@ rocblas_status rocblas_trtri_impl(rocblas_handle   handle,
         return rocblas_status_invalid_size;
     if(!invA)
         return rocblas_status_invalid_pointer;
+```
 
+
+
+```c++ library/src/blas3/rocblas_trtri.cpp
     size_t size = rocblas_trtri_temp_size<NB>(n, 1) * sizeof(T);
     if(handle->is_device_memory_size_query())
         return handle->set_optimal_device_memory_size(size);
