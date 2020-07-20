@@ -2,8 +2,7 @@
 title: rocBLAS矩阵求逆函数trtri()源码分析（更新中）
 date: 2020-04-23 21:36:22
 tags: BLAS
-category: 异构计算
-mathjax: true  
+category: 异构计算  
 ---
 
 本文的分析基于rocmBLAS的3.3.0版本，源代码的著作权属于AMD公司，其GitHub repo在https://github.com/ROCmSoftwarePlatform/rocBLAS 。  

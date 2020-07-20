@@ -1,5 +1,9 @@
 # hexo-theme-arknights
 
+## 多国语言Readme
+
+[日本語バージョン](README-Ja.md)  
+
 ## 预览
 - **Dr.Yue_plus: <http://ark.theme.yueplus.ink/>**
 - **Dr.Ye: <https://laurenfrost.github.io/>**
