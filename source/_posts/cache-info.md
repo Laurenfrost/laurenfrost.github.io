@@ -2,7 +2,7 @@
 title: 如何在Linux系统中查询cache信息
 date: 2020-04-28 13:43:23
 tags: cache
-category: 并行计算
+category: 系统结构
 ---
 
 <div align = "center">
