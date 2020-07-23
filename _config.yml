@@ -44,13 +44,23 @@ render_drafts: false
 post_asset_folder: true
 relative_link: false
 future: true
-highlight:
-  enable: true
-  line_number: true
-  auto_detect: false
-  tab_replace: '    '
-  wrap: true
-  hljs: true
+#highlight:
+#  enable: true
+#  line_number: true
+#  auto_detect: false
+#  tab_replace: '    '
+#  wrap: true
+#  hljs: true
+markdown_it_plus:
+    highlight: true
+    html: true
+    xhtmlOut: true
+    breaks: true
+    langPrefix:
+    linkify: true
+    typographer:
+    quotes: “”‘’
+    pre_class: highlight
 
 # Home page setting
 # path: Root path for your blogs index page. (default = '')

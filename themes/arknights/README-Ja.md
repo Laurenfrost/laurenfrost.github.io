@@ -137,4 +137,4 @@ hexo serve --debug
 - Tencent QQの交流グループ  
 - Reward：  
 
-![收款二维码](https://api.yueplus.ink/img/support.jpg)
+![QRコード](https://api.yueplus.ink/img/support.jpg)  

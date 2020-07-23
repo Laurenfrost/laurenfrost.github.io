@@ -28,7 +28,7 @@ body {
   background-position: 50% 40px;
   background-repeat: no-repeat;
   background-size: cover;
-  font-family: "JetBrains Mono", sans-serif;
+  font-family: "JetBrains Mono", 'Microsoft YaHei', '\5b8b\4f53', sans-serif;
   display: flex;
   flex-direction: column;
   align-items: stretch; }
@@ -69,8 +69,15 @@ kbd {
   padding: 0 3px;
   font-family: "JetBrains Mono"; }
 
-strong em {
-  color: #ec3000; }
+em {
+  font-family: Times, "Times New Roman", 'FangSong', 'SimSun', serif; }
+
+strong, em {
+  color: #fff; }
+
+strong em, em strong {
+  font-family: "JetBrains Mono", 'Microsoft YaHei', '\5b8b\4f53', sans-serif;
+  color: #C0392B; }
 
 blockquote {
   border-left: #2bf solid 5px;
@@ -269,7 +276,7 @@ article {
   border: 1px solid #898989;
   padding: 13px 15px;
   transition: .3s; }
-  .recent-post *, .recent-post .recent-info::after {
+  .recent-post .recent-info::after {
     transition: .3s; }
   .recent-post object h1, .recent-post object h2, .recent-post object h3, .recent-post object h4, .recent-post object h5, .recent-post object h6 {
     font-size: large;
@@ -485,6 +492,21 @@ aside {
 #post-content table {
   width: 100%; }
 
+#post-content .footnote-ref:before {
+  content: '';
+  display: inline-block;
+  margin-top: -60px;
+  width: 1px;
+  height: 60px;
+  visibility: hidden; }
+
+#post-content .footnotes ol li:before {
+  content: '';
+  display: block;
+  margin-top: -60px;
+  height: 60px;
+  visibility: hidden; }
+
 #post-footer hr {
   border-color: #fe2; }
 
@@ -560,9 +582,12 @@ aside {
     color: #2bf; }
     #Valine .vcard .vnick:hover {
       color: #000; }
+  #Valine .vsys {
+    background-color: transparent; }
   #Valine .vmeta .vat {
     color: #fe2; }
   #Valine .vcontent {
+    color: #c4c4c4;
     border-left: #fe2 solid 3px;
     padding-left: 20px;
     background-color: rgba(255, 255, 255, 0.05);
@@ -574,6 +599,9 @@ aside {
       background: linear-gradient(180deg, rgba(26, 26, 26, 0), rgba(26, 26, 26, 0.9)); }
     #Valine .vcontent::after {
       background: rgba(26, 26, 26, 0.9); }
+    #Valine .vcontent p {
+      color: #fff;
+      padding-bottom: 14px; }
 
 #veditor {
   color: #fff;

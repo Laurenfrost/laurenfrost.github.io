@@ -1,20 +1,22 @@
 # hexo-theme-arknights
 
-## 多国语言Readme
-
+## 多国语言Readme  
 [日本語バージョン](README-Ja.md)  
 
 ## 预览
-- **Dr.Yue_plus: <http://ark.theme.yueplus.ink/>**
+- ### **Dr.Yue_plus: <http://ark.theme.yueplus.ink/>**
 - **Dr.Ye: <https://laurenfrost.github.io/>**
 - **Dr.LingYun: <https://dr-lingyun.gitee.io/>**
 
 如果使用了这个主题，欢迎在这儿贴预览链接~
 
-![主题预览图片](https://api.yueplus.ink/img/arknights_demo.png)
+![主题预览图片](./demo.png)
 
 
 ## 安装
+### [一键下载](https://github.com/Yue-plus/hexo-theme-arknights/releases)
+
+## 手动安装
 根据需要执行以下代码
 ```shell script
 hexo init Hexo
@@ -27,7 +29,7 @@ git clone https://github.com/Yue-plus/hexo-theme-arknights.git themes/arknights
 ### 安装依赖
 npm 用户：
 ```shell script 
-cnpm install hexo-server hexo-browsersync hexo-renderer-pug hexo-renderer-sass hexo-renderer-ts
+cnpm install hexo-server hexo-browsersync hexo-renderer-pug hexo-renderer-sass hexo-renderer-ts --save
 ```
 yarn 用户：
 ```shell script
@@ -55,10 +57,18 @@ yarn add hexo-server hexo-browsersync hexo-renderer-pug hexo-renderer-sass hexo-
   1:1 比例的 `png` 图片；
 
 ## 写作
-- 可参考 [Hexo 官网](https://hexo.io/zh-cn/docs/writing)。
-- 在主题仓库的 Hexo 分支有一些示例文本可以取用：
-  <https://github.com/Yue-plus/hexo-theme-arknights/tree/hexo/source/_posts>
-- 在 `<!-- more -->` 之前的内容称之为摘要会显示在首页上，并且可以设置是否在正文显示。
+- 可参考 [Hexo | 写作](https://hexo.io/zh-cn/docs/writing)。
+- 在主题仓库的 Hexo 分支有一些[示例文本](https://github.com/Yue-plus/hexo-theme-arknights/tree/hexo/source/_posts)可以取用
+- 添加文章标签与分类，更多特性可参考 [Hexo | Front-matter](https://hexo.io/zh-cn/docs/front-matter) ，示例：
+  ```markdown
+  ---
+  title: 'Hello World !'
+  date: 2020-04-15 21:54:02
+  tags: code
+  category: Example
+  ---
+  ```
+- 在 `<!-- more -->` 之前的内容称之为摘要，会显示在首页上，并且可以设置是否也在正文显示。
 
 ## 顶部导航栏新建自定义页面
 - 例如：新建一个 `about` 页面
@@ -82,8 +92,55 @@ yarn add hexo-server hexo-browsersync hexo-renderer-pug hexo-renderer-sass hexo-
 
 开启邮件提醒：[zhaojun1998 / Valine-Admin](https://github.com/zhaojun1998/Valine-Admin)
 
+## 数学公式
+使用 [hexo-renderer-markdown-it-plus](https://github.com/CHENXCHEN/hexo-renderer-markdown-it-plus) Hexo 渲染器来显示数学公式
+
+### 安装
+1. 在 Hexo 目录下执行以下指令：
+
+```shell script
+#卸载默认的渲染器
+npm un hexo-renderer-marked --save
+# 安装 hexo-renderer-markdown-it-plus 插件
+cnpm i hexo-renderer-markdown-it-plus --save
+```
+
+2. 修改 `<Hexo>/_config.yml` 文件：
+
+把：
+```yml
+  highlight:
+  enable: true
+  line_number: true
+  auto_detect: false
+  tab_replace: ''
+  wrap: true
+  hljs: true
+```
+替换为：
+```yml
+markdown_it_plus:
+    highlight: true
+    html: true
+    xhtmlOut: true
+    breaks: true
+    langPrefix:
+    linkify: true
+    typographer:
+    quotes: “”‘’
+    pre_class: highlight
+```
+
+3. 修改 `<Hexo>/themes/arknights/_config.yml` 文件：
+
+删除 `- https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.9.0/katex.min.css` 前面的 `# `（取消注释）
+
 ## 参与开发
-欢迎提交 [Issues](https://github.com/Yue-plus/hexo-theme-arknights/issues/new) 与 [PR](https://github.com/Yue-plus/hexo-theme-arknights/pulls)
+### 开发人员
+- [Yue_plus](https://github.com/Yue-plus)
+- [Laurenfrost](https://github.com/Laurenfrost)
+
+> 欢迎提交 [Issues](https://github.com/Yue-plus/hexo-theme-arknights/issues/new) 与 [PR](https://github.com/Yue-plus/hexo-theme-arknights/pulls)
 
 ### 分支说明
 | 分支     | 说明                                           |
@@ -96,18 +153,12 @@ yarn add hexo-server hexo-browsersync hexo-renderer-pug hexo-renderer-sass hexo-
 先装好 [nodejs](https://nodejs.org/) 和 [yarn](https://classic.yarnpkg.com/zh-Hans/) ，然后执行以下命令：
 ```shell script
 yarn global add hexo-cli yo generator-hexo-theme
-hexo init <test>
-cd <test>
-yarn add hexo-server hexo-browsersync hexo-renderer-pug hexo-renderer-sass hexo-renderer-ts
-cd <test>/themes
-git clone https://github.com/Yue-plus/hexo-theme-arknights.git arknights
-```
-修改 `<test>/_config.yml` 中 `theme:` 的值改为 `arknights`
-然后,打开 `<test>/themes/arknights` 下编辑主题
-```shell script
+git clone -b hexo https://github.com/Yue-plus/hexo-theme-arknights.git
+cd hexo-theme-arknights
+git clone https://github.com/Yue-plus/hexo-theme-arknights.git themes/arknights
+yarn install
 hexo serve --debug
 ```
-
 
 ### 开发中可能遇见的 BUG 及解决方法
 #### 修改 `.pug` 模板文件无法自动刷新页面。
@@ -137,10 +188,11 @@ hexo serve --debug
 ## 支援主题开发
 喜欢这个主题的话可以：
 - 给颗小星星吧 `(/▽＼)`
+  > 100star 做个新主题哦~
 - 开发者的B服ID：`YuePlus#6221`
 - 加入 QQ 群：618221514
     > 群内开发为主，吹水晒卡，分享线索7也都欢迎哦~ `d=====(￣▽￣*)b`
 - 打赏、赞助:
 
-![收款二维码](https://api.yueplus.ink/img/support.jpg)
+![收款二维码](./support.jpg)
     

@@ -48,6 +48,19 @@
         background-color: #fe2
   table
     width: 100%
+  .footnote-ref:before
+    content: ''
+    display: inline-block
+    margin-top: -60px
+    width: 1px
+    height: 60px
+    visibility: hidden
+  .footnotes ol li:before
+    content: ''
+    display: block
+    margin-top: -60px
+    height: 60px
+    visibility: hidden
 
 #post-footer hr
   border-color: #fe2
@@ -124,9 +137,12 @@
     color: #2bf
     &:hover
       color: #000
+  .vsys
+    background-color: transparent
   .vmeta .vat
     color: #fe2
   .vcontent
+    color: #c4c4c4
     border-left: #fe2 solid 3px
     padding-left: 20px
     background-color: rgba(#fff, .05)
@@ -138,6 +154,9 @@
       background: linear-gradient(180deg,hsla(0,0%,10%,0),hsla(0,0%,10%,.9))
     &::after
       background: hsla(0,0%,10%,.9)
+    p
+      color: #fff
+      padding-bottom: 14px
 #veditor
   color: #fff
   font-family: "JetBrains Mono"
