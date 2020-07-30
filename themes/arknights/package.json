@@ -7,7 +7,7 @@
     "email": "Yue_plus@foxmail.com",
     "url": "https://github.com/Yue-plus"
   },
-  "repository": {
+  "repo": {
     "type": "git",
     "url": "git+https://github.com/Yue-plus/hexo-theme-arknights.git"
   },
