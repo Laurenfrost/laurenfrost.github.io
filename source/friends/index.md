@@ -22,6 +22,7 @@ date: 2020-04-22 21:42:58
   
 ---
 
-<img src = 73278147-resized.jpg width = 80% height = 80% alt = "Life grid">
+<img src = 73278147-resized.jpg alt = "Life grid">
+
 <div align=right> illustration: <a href = "https://www.pixiv.net/artworks/73278147">Life grid</a> by <a href = "https://www.pixiv.net/users/19065369">chihiro037</a></div>  
   

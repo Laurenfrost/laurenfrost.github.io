@@ -6,7 +6,7 @@ category: 日常踩坑
 ---
 为了方便我<s>写博客</s>做知识管理，我的台式机（主力机）和Windows平板上都有一份laurenfrost.github.io的repo。但我更多的时间是坐在台式机前，所以大部分的更新都是从我台式机上的repo来push到GitHub的。至于我的平板，则只有偶尔出门的时候会用，因此平板上的repo的进度就落后很多。而且经常有只在平板上写了几个字就放在那里了，最后是在台式机上重新hexo new了一个post，然后deploy的。
 
-## unrelated histories
+## `unrelated histories`  
 今天我为了乘凉跑到咖啡店里，打算接着写之前的内容的的，就打算直接把GitHub里的更新给pull到平板里的repo。结果就遇到了下面的报错：  
 
 ```
@@ -64,7 +64,8 @@ Aborting
 ```
 本地repo跟远程repo相比还是有change，还提示我要么先commit，要么就stash它们。  
 
-## git stash
+## `git stash`  
+
 stash是啥？是没见过的浮莲子啊。  
 > stash 英 [stæʃ]	美 [stæʃ]  
 > v. 存放；贮藏；隐藏；
@@ -101,7 +102,7 @@ stash是啥？是没见过的浮莲子啊。
 > `git stash`可以多次使用，然后用`git stash list`来查看所有保存的工作现场，然后用`git stash apply`来恢复。  
 > 使用`git stash apply`恢复之后，被恢复的现场不会自动删除，需要手动使用`git stash drop`来手动删除。   
 
-## 其他方案
+## 其他方案  
 而且对于这种报错，其实除了stash之外还有别的思路存在：[为什么不问问神奇的stackoverflow呢](https://stackoverflow.com/questions/14318234/how-do-i-ignore-an-error-on-git-pull-about-my-local-changes-would-be-overwritt)?  
 这个页面里大佬们提供了好几个方法。  
 
@@ -127,7 +128,7 @@ git pull
 ```
 
 ## 感想
-git的使用像命令行一样非常灵活，可以说条条大路通罗马，关键在于理解它的工作原理。一旦吃透了它的工作机制，解决这些小问题便是易如反掌了。  
+git的使用像写命令行脚本一样，非常灵活，可以说条条大路通罗马，关键在于理解它的工作原理。一旦吃透了它的工作机制，解决这些小问题便是易如反掌了。  
 关键还是要多熟悉熟悉它们。  
 
 ## 参考内容
