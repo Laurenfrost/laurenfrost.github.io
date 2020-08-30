@@ -42,7 +42,7 @@ jobs:
           echo "$HEXO_DEPLOY_PRIVATE_KEY" > ~/.ssh/id_rsa 
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
-          ssh -vT git@github.com
+        # ssh -vT git@github.com
         
       - name: Setup Git Infomation
         run: | 
