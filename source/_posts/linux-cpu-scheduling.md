@@ -164,3 +164,277 @@ CPU 调度器分为两大类：实时（real-time）和尽力而为（best-effor
 另一方面，多级反馈队列使用衰减方法监视时间超过一个调度量的任务。根据任务的长期 CPU 消耗为其分配合适的调度优先级。这种 CPU 消耗会周期性地衰减，以防止某个任务因为一次大规模的 CPU 活动爆发而无限期地受到惩罚。实际上，任务每次在 CPU 上的运行时间都会被削减。然后，在每个衰减周期(由调度程序定义)中，调度程序将每个任务的CPU总消耗除以一个策略定义的数字（大于 1）。调度程序入队一个任务，它将根据该任务的 CPU 总消耗分配优先级；消耗 CPU 越少的任务优先级越高。[<sup>60</sup>](#refer-60) [<sup>71</sup>](#refer-71) [<sup>76</sup>](#refer-76)
 
 #### 比例共享
+
+
+
+
+## 参考文献
+
+[1] Red hat enterprise linux life cycle. URL https://access.redhat.com/support/policy/updates/errata/.
+
+[2] From a few cores to many: A tera-scale computing research overview. http://www.developers.net/intelisdshowcase/view/2181, 2006.
+
+[3] CyanogenMod Android Rom, 2009. URL http://www.cyanogenmod.com/home/4-1-6-is-here-with-100-more-jet-fuel.
+
+[4] Apache http server, 2010. URL http://httpd.apache.org.
+
+[5] Condor high throughput computing system, 2010. URL http://www.cs.wisc.edu/condor/.
+
+[6] Dovecot, 2010. URL http://www.dovecot.org.
+
+[7] Sendmail, 2010. URL http://www.sendmail.org.
+
+[8] Apache tomcat, 2010. URL http://tomcat.apache.org.
+
+[9] Tornado, 2010. URL http://www.tornadoweb.org.
+
+[10] Poweredge r910 rack server, 2011. URL http://www.dell.com/us/en/enterprise/servers/poweredge-r910/pd.aspx?refid=poweredge-r910&cs=555&s=biz.
+
+[11] Yoshihisa Abe, Hiroshi Yamada, and Kenji Kono. Enforcing appropriate process execution for exploiting idle resources from outside operating systems. In Proceedings of the EuroSys Conference (EuroSys ’08), pages 27–40, Glasgow, Scotland UK, March 2008.
+
+[12] Michael J. Accetta, Robert V. Baron,William J. Bolosky, David B. Golub, Richard F. Rashid, Avadis Tevanian, and Michael Young. Mach: A new kernel foundation for unix development. In Proceedings of the USENIX Summer Technical Conference (USENIX Summer ’86), Atlanta, Georgia, June 1986.
+
+[13] Amazon. Amazon elastic compute cloud, 2010. URL http://aws.amazon.com/ec2.
+
+[14] Thomas E. Anderson, Brian N. Bershad, Edward D. Lazowska, and Henry M. Levy. Scheduler activations: effective kernel support for the user-level management of parallelism. In Proceedings of the 13thACMSymposium on Operating Systems Principles (SOSP ’91), pages 95–109, Pacific Grove, California, October 1991.
+
+[15] Jeremy Andrews. Cfs and sched yield. Kernel Trap, Sep 2007. URL http://kerneltrap.org/Linux/CFS_and_sched_yield.
+
+[16] AP. North carolina unemployment claims crash website. USA Today, Jan 2009.
+
+[17] Andrea C. Arpaci-Dusseau, and Remzi H. Arpaci-Dusseau. Information and Control in Gray-Box Systems. In Proceedings of the 18th ACM Symposium on Operating Systems Principles (SOSP ’01), pages 43–56, Banff, Canada, October 2001.
+
+[18] Andrea C. Arpaci-Dusseau, Remzi H. Arpaci-Dusseau, Nathan C. Burnett, Timothy E. Denehy, Thomas J. Engle, Haryadi S. Gunawi, James A. Nugent, and Florentina I. Popovici. Transforming policies into mechanisms with infokernel. In Proceedings of the 19th ACM Symposium on Operating Systems Principles (SOSP ’03), pages 90–105, Bolton Landing, New York, October 2003.
+
+[19] Remzi H. Arpaci-Dusseau, and Andrea C. Arpaci-Dusseau. Fail-Stutter Fault Tolerance. In The EighthWorkshop on Hot Topics in Operating Systems (HotOS VIII), pages 33–38, Schloss Elmau, Germany, May 2001.
+
+[20] Remzi H. Arpaci-Dusseau, and Andrea C. Arpaci-Dusseau. Operating Systems: Four Easy Pieces. 2011.
+
+[21] Krste Asanovic, Ras Bodik, Bryan Catanzaro, Joseph J. Gebis, Parry Husbands, Kurt Keutzer, David A. Patterson, William L. Plishker, John Shalf, Samuel W. Williams, and Katherine A. Yelick. The Landscape of Parallel Computing Research: A View from Berkeley. Technical Report UCB/EECS-2006-183, University of California, Berkeley, Dec 2006.
+
+[22] Ozalp Babaoglu, Márk Jelasity, Anne-Marie Kermarrec, Alberto Montresor, and Maarten van Steen. Managing clouds: a case for a fresh look at large unreliable dynamic networks. ACM SIGOPS Operating Systems Review, 40(3):9–13, 2006.
+
+[23] Ganesh Balakrishnan. Intel xeon 5500 memory peformance. www.crc.nd.edu/ rich/Nehalem/Nehalem%20Memory%20performance.pdf.
+
+[24] Scott A. Banachowski, and Scott A. Brandt. The BEST scheduler for integrated processing of best-effort and soft real-time processes. In Proceedings of Multimedia Computing andNetworking 2002 (MMCN ’02), pages 46–60, San Jose, California, January 2002.
+
+[25] Scott A. Banachowski, and Scott .A. Brandt. Better real-time response for time-share scheduling. In Proceedings of the 17th International Parallel and Distributed Processing Symposium (IPDPS ’03), Nice, France, April 2003.
+
+[26] Scott A. Banachowski, JoelWu, and Scott A. Brandt. Missed deadline notification in best-effort schedulers. In Proceedings of Multimedia Computing and Networking 2004 (MMCN ’04), pages 123–135, Santa Clara, California, January 2004.
+
+[27] Gaurav Banga, Peter Druschel, and Jeffrey C. Mogul. Resource containers: A new facility for resource management in server systems. In Proceedings of the 3rd Symposium on Operating Systems Design and Implementation (OSDI ’99), pages 45–58, New Orleans, Louisiana, February 1999.
+
+[28] Paul Barham, Simon Crosby, Tim Granger,Neil Stratford, Meriel Huggard, and Fergal Toomey. Measurement based resource allocation for multimedia applications. In Proceedings of ACM/SPIE Multimedia Computing and Networking 1998 (MMCN’98), San Jose, California, January 1998.
+
+[29] Paul Barham, Boris Dragovic, Keir Fraser, Steven Hand, Tim Harris, Alex Ho, Rolf Neugebauer, Ian Pratt, and AndrewWarfield. Xen and the art of virtualization. In Proceedings of the 19th ACM Symposium on Operating Systems Principles (SOSP ’03), pages 164–177, Bolton Landing, New York, October 2003.
+
+[30] Paul Barham, Austin Donnelly, Rebecca Isaacs, and Richard Mortier. Using magpie for request extraction and workload modelling. In Proceedings of the 6th Symposium on Operating Systems Design and Implementation (OSDI ’04), pages 259–272, San Francisco, California, December 2004.
+
+[31] Andrew Baumann, Paul Barham, Pierre-Evariste Dagand, Tim Harris, Rebecca Isaacs, Simon Peter, Timothy Roscoe, Adrian Schupbach, and Akhilesh Singhania. The Multikernel: A New OS Architecture for Scalable Multicore Systems. In Proceedings of the 22nd ACM Symposium on Operating Systems Principles (SOSP ’07), Big Sky, Montana, October 2009.
+
+[32] Jon Bentley, editor. More programming pearls: confessions of a coder. Addison-Wesley, 1 edition, 1988.
+
+[33] Brian N. Bershad, Craig Chambers, Susan Eggers, Chris Maeda, Dylan McNamee, Przemyslaw Pardyak, Stefan Savage, and Emin Gun Sirer. Spin—an extensible microkernel for application-specific operating system services. In Proceedings of the 15th ACM Symposium on Operating Systems Principles (SOSP ’95), Copper Mountain Resort, Colorado, December
+1995.
+
+[34] Sergey Blagodurov, Sergey Zhuravlev, and Alexandra Fedorova. Contention Aware Scheduling on Multicore Systems. ACM Transactions on Computer Systems, 28(4), December 2010.
+
+[35] Daniel Bovet, and Marco Cesati. Understanding the Linux Kernel. O’Reilly Media, Inc., 3rd edition, 2005.
+
+[36] Silas Boyd-Wickizer, Austin T. Clements, Yandong Mao, Aleksey Pesterev, M. Frans Kaashoek, Robert Morris, and Nickolai Zeldovich. An Analysis of Linux Scalability to Many Cores. In Proceedings of the 9th Symposium on Operating Systems Design and Implementation (OSDI ’10), Vancouver, Canada, December 2010.
+
+[37] Max Bruning. A Comparison of Solaris, Linux, and FreeBSD Schedulers, October 2005. URL http://www.opensolaris.org/os/article/2005-10-14_a_comparison_of_solaris__linux__and_freebsd_
+kernels.
+
+[38] Edouard Bugnion, Scott Devine, and Mendel Rosenblum. Disco: running commodity operating systems on scalable multiprocessors. In Proceedings of the 16th ACM Symposium on Operating Systems Principles (SOSP ’97), pages 143–156, Saint-Malo, France, October 1997.
+
+[39] Giorgio Buttazzo, and Luca Abeni. Adaptive workload management through elastic scheduling. Real-Time Systems, 23(1/2):7–24, 2002.
+
+[40] John Calandrino, Dan Baumberger, Jessica Young Tong Li, , and Scott Hahn. Linsched: The linux scheduler simulator. In Proceedings of the 21st ISCA International Conference on Parallel and Distributed Computing and Communication Systems (PDCCS ’08), pages 171–176, Sept 2008.
+
+[41] George M. Candea, and Michael B. Jones. Vassal: loadable scheduler support for multi-policy scheduling. In Proceedings of the 2nd conference on USENIX Windows NT Symposium, 1998.
+
+[42] Bryan Cantrill, MichaelW. Shapiro, and Adam H. Leventhal. Dynamic Instrumentation of Production Systems. In Proceedings of the USENIX Annual Technical Conference (USENIX ’04), pages 15–28, Boston, Massachusetts, June 2004.
+
+[43] Bogdan Caprita, Wong Chun Chan, Jason Nieh, Clifford Stein, and Haoqiang Zheng. Group ratio round-robin: O(1) proportional share scheduling for uniprocessor and multiprocessor systems. In Proceedings of the USENIX Annual Technical Conference (USENIX ’05), pages 337–352, Anaheim, California, April 2005.
+
+[44] Bogdan Caprita, Jason Nieh, and Clifford Stein. Grouped distributed queues: distributed queue, proportional share multiprocessor scheduling. In Proceedings of the 25th ACM Symposium on Principles of Distributed Computing (PODC ’06), pages 72–81, Denver, Colorado, July 2006.
+
+[45] Michael J. Carey, Sanjay Krishnamurthi, and Miron Livny. Load control for locking: The ’half-and-half’ approach. In Proceedings of the Ninth Symposium on Principles of Database Systems, pages 72–84, Nashville, Tennessee, April 1990.
+
+[46] Tracy Carver. Magny-cours and direct connect architecture 2.0, March 2010. URL http://developer.amd.com/documentation/articles/pages/magny-cours-direct-connect-architecture-2.0.aspx.
+
+[47] Anupam Chanda, Alan L. Cox, and Willy Zwaenepoel. Whodunit: transactional profiling for multi-tier applications. In Proceedings of the EuroSys Conference (EuroSys ’07), pages 17–30, Lisbon, Portugal, March 2007.
+
+[48] Abhishek Chandra, Micah Adler, Pawan Goyal, and Prashant Shenoy. Surplus fair scheduling: a proportional-share cpu scheduling algorithm for symmetric multiprocessors. In Proceedings of the 4th Symposium on Operating Systems Design and Implementation (OSDI ’00), San Diego, California, October 2000.
+
+[49] Abhishek Chandra, Pawan Goyal, and Prashant Shenoy. Quantifying the benefits of resource multiplexing in on-demand data centers. In Proceedings of the First ACM Workshop on Algorithms and Architectures for Self-Managing Systems (Self-Manage 2003), June 2003.
+
+[50] Kevin Closson. Intel xeon 5500 (nehalem EP) NUMA versus interleaved memory (aka SUMA): There is no difference! a forced confession, August 2009. URL http://kevinclosson.wordpress.com/2009/08/14/.
+
+[51] Jonathan Corbet. Ks2009: How google uses linux. LWN.net, Oct 2009. URL http://lwn.net/Articles/357658/.
+
+[52] Tommaso Cucinotta, Fabio Checconi, Luca Abeni, and Luigi Palopoli. Self-tuning schedulers for legacy real-time applications. In Proceedings of the Eurosys Conference (EuroSys ’10), pages 55–68, Paris, France, April 2010.
+
+[53] Timothy E. Denehy, John Bent, Florentina I. Popovici, Andrea C. Arpaci-Dusseau, and Remzi H. Arpaci-Dusseau. Deconstructing Storage Arrays. In Proceedings of the 11th International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS XI), pages 59–71, Boston, Massachusetts, October 2004.
+
+[54] Peter J. Denning. Thrashing: its causes and prevention. In AFIPS ’68: Proceedings of the Fall joint computer conference, part I, pages 915–922, 1968.
+
+[55] John R. Douceur, andWilliam J. Bolosky. Progress-based regulation of low-importance processes. In Proceedings of the 17th ACM Symposium on Operating Systems Principles (SOSP ’99), pages 247–260, Kiawah Island Resort, South Carolina, December 1999.
+
+[56] Kenneth J. Duda, and David R. Cheriton. Borrowed-virtual-time (bvt) scheduling: supporting latency-sensitive threads in a general-purpose 190 scheduler. In Proceedings of the 17th ACM Symposium on Operating Systems Principles (SOSP ’99), pages 261–276, Kiawah Island Resort, South Carolina, December 1999.
+
+[57] Frank C. Eigler, Vara Prasad,Will Cohen, Hien Nguyen, Martin Hunt, Jim Keniston, and Brad Chen. Architecture of systemtap: a Linux trace/probe tool, July 2005. URL http://sourceware.org/systemtap/archpaper.pdf.
+
+[58] Jeremy Elson, and Jon Howell. Handling flash crowds from your garage. In Proceedings of the USENIX Annual Technical Conference (USENIX ’08), pages 171–184, Boston, Massachusetts, June 2008.
+
+[59] Dawson R. Engler, M. Frans Kaashoek, and James OâŁ™Toole Jr. Exokernel: an operating system architecture for application-level resource management. In Proceedings of the 16th ACM Symposium on Operating Systems Principles (SOSP ’97), pages 251–266, Saint-Malo, France, October 1997.
+
+[60] D. H. J. Epema. An analysis of decay-usage scheduling in multiprocessors. In Proceedings of the 1995 ACM SIGMETRICS Conference on Measurement and Modeling of Computer Systems (SIGMETRICS ’95), Banff, Alberta, Canada, June 1995.
+
+[61] Alexandra Fedorova, Margo Seltzer, Christopher Small, and Daniel Nussbaum. Performance of Multithreaded Chip Multiprocessors And Implications For Operating System Design. In Proceedings of the USENIX Annual Technical Conference (USENIX ’05), Anaheim, California, April 2005.
+
+[62] Laurie J. Flynn. Intel halts development of 2 new microprocessors. The New York Times, May 2004.
+
+[63] Samuel H. Fuller, and Lynette I. Miller, editors. The Future of Computing Performance: Game Over or Next Level? The National Academies Press, 2011.
+
+[64] Corey Gough, Suresh Siddha, and Ken Chen. Kernel Scalability – Expanding the horizon beyond fine grain locks. In Linux Symposium, volume 1, pages 153–166, 2007.
+
+[65] Pawan Goyal, Xingang Guo, and Harrick M. Vin. A hierarchial cpu scheduler for multimedia operating systems. In Proceedings of the 2nd Symposium on Operating Systems Design and Implementation (OSDI ’96), pages 107–121, Seattle,Washington, October 1996.
+
+[66] Steven D. Gribble. Robustness in complex systems. In The EighthWorkshop on Hot Topics in Operating Systems (HotOS VIII), pages 21 – 26, Schloss Elmau, Germany, May 2001.
+
+[67] Varun Gupta, and Mor Harchol-Balter. Self-adaptive admission control policies for resource-sharing systems. In Proceedings of the 2009 Joint International Conference on Measurement and Modeling of Computer Systems (SIGMETRICS/Performance ’09), pages 311–322, Seattle,Washington, June 2007.
+
+[68] Andreas Haeberlen. A case for the accountable cloud. In The 3rd ACM SIGOPS InternationalWorkshop on Large Scale Distributed Systems and Middleware (LADIS’09), October 2009.
+
+[69] Per Brinch Hansen. The nucleus of a multiprogramming system. Communications of the ACM, 13(4):238–241, April 1970.
+
+[70] Gernot Heiser. Inside L4/MIPS: Anatomy of a High-Performance Microkernel. School of Computer Science and Engineering, University of NSW, Sydney 2052, Australia, Jan 2001.
+
+[71] Joseph L Hellerstein. Achieving service rate objectives with decay usage scheduling. IEEE Transactions on Software Engineering, 19(8):813–825, 1993.
+
+[72] Steven Hofmeyr, Costin Iancu, and Filip Blagojevi´c. Load balancing on speed. In 15th ACM SIGPLAN Annual Symposium on Principles and Practice of Parallel Programming (PPoPP ’10), pages 147–158, January 2010.
+
+[73] Raj Jain. Congestion control and traffic management in atm networks: Recent advances and a survey. Computer Networks and ISDN Systems, 28 (13):1723 – 1738, 1996.
+
+[74] Nikolai Joukov, Avishay Traeger, Rakesh Iyer, Charles P.Wright, and Erez Zadok. Operating system profiling via latency analysis. In Proceedings of the 7th Symposium on Operating Systems Design and Implementation (OSDI ’06), pages 89–102, Seattle, Washington, November 2006. 
+
+[75] M. Frans Kaashoek, Dawson R. Engler, Gregory R. Ganger, HÃ©ctor M. Briceño, Russell Hunt, David Mazières, Thomas Pinckney, Robert Grimm, John Jannotti, and Kenneth Mackenzie. Application Performance and Flexibility on Exokernel Systems. In Proceedings of the 16th ACM Symposium on Operating Systems Principles (SOSP ’97), pages 52–65, Saint-Malo, France, October 1997.
+
+[76] J. Kay, and P. Lauder. A fair share scheduler. Communications of the ACM, 31(1):44–55, 1988.
+
+[77] Vahid Kazempour, Alexandra Fedorova, and Pouya Alagheband. Performance implications of cache affinity on multicore processors. In Euro-Par ’08, pages 151–161, 2008. 
+
+[78] Con Kolivas. BFS – The Brain Fuck Scheduler. http://ck.kolivas.org/patches/bfs/sched-BFS.txt.
+
+[79] Con Kolivas. Faqs about bfs v0.310, Nov 2009. URL http://ck.kolivas.org/patches/bfs/bfs-faq.txt.
+
+[80] Con Kolivas. BFS CPU scheduler v0.304 stable release. LWN.net, Oct 2009. URL http://lwn.net/Articles/357451/.
+
+[81] Charles Krasic, Mayukh Saubhasik, Anirban Sinha, and Ashvin Goel. Fair and timely scheduling via cooperative polling. In Proceedings of the EuroSys Conference (EuroSys ’09), pages 103–116, Nuremburg, Germany, April 2009.
+
+[82] Orran Krieger, Marc Auslander, Bryan Rosenburg, RobertW.Wisniewski, Jimi Xenidis, Dilma Da Silva, Michal Ostrowski, Jonathan Appavoo, Maria Butrico, Mark Mergen, Amos Waterland, and Volkmar Uhlig. K42: building a complete operating system. In Proceedings of the EuroSys Conference (EuroSys ’06), pages 133–145, Leuven, Belgium, April 2006.
+
+[83] Avinesh Kumar. Multiprocessing with the completely fair scheduler. IBM developerWorks, Jan 2008.
+
+[84] Horacio Andrés Lagar-Cavilla, Joseph Andrew Whitney, Adin Matthew Scannell, Philip Patchin, Stephen M. Rumble, Eyal de Lara, Michael Brudno, and Mahadev Satyanarayanan. Snowflock: rapid virtual machine cloning for cloud computing. In Proceedings of the EuroSys Conference (EuroSys ’09), pages 1–12, Nuremburg, Germany, April 2009.
+
+[85] Butler W. Lampson. Hints for computer system design. In Proceedings of the 9th ACM Symposium on Operating System Principles (SOSP ’83), pages 33–48, Bretton Woods, New Hampshire, October 1983.
+
+[86] Ian Leslie, Derek McAuley, Richard Black, Timothy Roscoe, Paul Barham, David Evers, Robin Fairbairns, and Eoin Hyden. The design and implementation of an operating system to support distributed multimedia applications. IEEE Journal on Selected Areas in Communications, 14(7), 1996.
+
+[87] Tong Li, Dan Baumberger, and Scott Hahn. Efficient and scalable multiprocessor fair scheduling using distributed weighted round-robin. In 14th ACM SIGPLAN Symposium on Principles and Practice of Parallel Programming (PPoPP ’09), pages 65 – 74, February 2009.
+
+[88] Richard McDougall, and Jim Mauro. Solaris Internals: Solaris 10 and Open-Solaris Kernel Architecture. Sun Microsystems Press, 2nd edition, 2007.
+
+[89] Marshall Kirk McKusick, and George V. Neville-Neil. The Design and Implementation of the FreeBSD Operating System. Addison-Wesley, 2005.
+
+[90] Joe Meehean, and Miron Livny. A service migration case study: Migrating the Condor schedd. In Proceedings of the 38th Midwest Instruction Computing Symposium (MICS ’05), April 2005.
+
+[91] Jeffrey C. Mogul. Emergent (mis)behavior vs. complex software systems. In Proceedings of the EuroSys Conference (EuroSys ’06), pages 293–304, Leuven, Belgium, April 2006.
+
+[92] Ingo Molinar. CFS Scheduler, . URL Linux_2.6.36/Documentation/scheduler/sched-design-CFS.txt.
+
+[93] Ingo Molinar. Goals, Design and Implementation of the newultra-scalable O(1) scheduler, . URL Linux_2.6.18/Documentation/sched-design.txt.
+
+[94] Gordon E. Moore. Cramming more components onto integrated circuits. Electronics, 38(8), April 1965.
+
+[95] Satish Narayanasamy, Cristiano Pereira, Harish Patil, Robert Cohn, and Brad Calder. Automatic logging of operating system effects to guide application-level architecture simulation. In Proceedings of the joint international conference on Measurement and modeling of computer systems, SIGMETRICS ’06/Performance ’06, pages 216–227, 2006.
+
+[96] Netcraft. Operating system share by groups for sites in all locations, January 2009. URL https://ssl.netcraft.com/ssl-sample-report/CMatch/osdv_all.
+
+[97] Chandandeep Singh Pabla. Completely fair scheduler. Linux Journal, Aug 2009.
+
+[98] Pradeep Padala, Kai-Yuan Hou, Kang G. Shin, Xiaoyun Zhu, Mustafa Uysal, Zhikui Wang, Sharad Singhal, and Arif Merchant. Automated control of multiple virtualized resources. In Proceedings of the EuroSys Conference (EuroSys ’09), pages 13–26, Nuremburg, Germany, April 2009.
+
+[99] Jitendra Padhye, and Sally Floyd. Identifying the TCP Behavior of Web Servers. In Proceedings of SIGCOMM ’01, San Diego, California, August 2001.
+
+[100] Maija Palmer. Surge of goods for sale sparks ebay crash and compensation claims. FT.com (Financial Times), Nov 2009.
+
+[101] Abhay K. Parekh, and Robert G. Gallager. Ageneralized processor sharing approach to flow control in integrated services networks: the single-node case. IEEE/ACM Transactions on Networking, 1(3):344–357, 1993.
+
+[102] PCLinuxOS. PCLinuxOS 2010 Edition is now available for download. URL http://www.pclinuxos.com/?p=579.
+
+[103] Nick Piggin. Less Affine Wakeups, February 2005. URL http://lwn.net/Articles/124982/.
+
+[104] Vijayan Prabhakaran, Andrea C. Arpaci-Dusseau, and Remzi H. Arpaci-Dusseau. Analysis and Evolution of Journaling File Systems. In Proceedings of the USENIX Annual Technical Conference (USENIX ’05), pages 105–120, Anaheim, California, April 2005.
+
+[105] Pratap Ramamurthy, Vyas Sekar, Aditya Akella, Balachander Krishnamurthy, and Anees Shaikh. Remote profiling of resource constraints of web servers using mini-flash crowds. In Proceedings of the USENIX Annual Technical Conference (USENIX ’08), pages 185–198, Boston, Massachusetts, June 2008.
+
+[106] John Regehr. Inferring Scheduling Behavior with Hourglass. In Proceedings of the USENIX Annual Technical Conference (FREENIX Track), Monterey, California, June 2002.
+
+[107] Jeff Roberson. Ule: a modern scheduler for freebsd. In Proceedings of the 2nd USENIX Conference on BSD, 2003.
+
+[108] Mark E. Russinovich, David A. Solomon, and Alex Ionescu. Windows Internals: Covering Windows Server 2008 and Windows Vista. Microsoft Press, 5 edition, 2009.
+
+[109] Bianca Schroeder, and Mor Harchol-Balter. Web servers under overload: How scheduling can help. ACM Transactions on Internet Technology, 6(1): 20–52, 2006.
+
+[110] Guo Shipeng, and Ken Willis. Snags, again, for china ticket sale. Reuters, May 2008.
+
+[111] Amit Singh. Mac OS X Internals: A systems approach. Addison-Wesley, 2006.
+
+[112] Christopher Small, and Margo Seltzer. Vino: An integrated platform for operating system and database research. Technical Report TR-30-94, Harvard, 1994.
+
+[113] David A. Solomon. Inside Windows NT. Microsoft Programming Series. Microsoft Press, 2nd edition, May 1998.
+
+[114] Stephen Soltesz, Herbert Pötzl, Marc E. Fiuczynski, Andy Bavier, and Larry Peterson. Container-based operating system virtualization: a scalable, high-performance alternative to hypervisors. In Proceedings of the EuroSys Conference (EuroSys ’07), pages 275–287, Lisbon, Portugal, March 2007.
+
+[115] Christopher Stewart, Terence Kelly, and Alex Zhang. Exploiting nonstationarity for performance prediction. In Proceedings of the EuroSys Conference (EuroSys ’07), pages 31–44, Lisbon, Portugal, March 2007.
+
+[116] Ion Stoica, and Hussein Abdel-Wahab. Earliest eligible virtual deadline first: A flexible and accurate mechanism for proportional share resource allocation. Technical Report TR-95-22, Old Dominion University, 1996. [117] TOP500. Top500 operating system family share, November 2010. URL http://top500.org/stats/list/36/osfam.
+
+[118] Josep Torrellas, Andrew Tucker, and Anoop Gupta. Evaluating the Performance of Cache-Affinity Scheduling in Shared-Memory Multiprocessors. Journal of Parallel and Distributed Computing, 24:139–151, 1995. 
+
+[119] Avishay Traeger, Ivan Deras, and Erez Zadok. Darc: dynamic analysis of root causes of latency distributions. In Proceedings of the 2008 ACM SIGMETRICS Conference on Measurement and Modeling of Computer Systems (SIGMETRICS ’08), pages 277–288, Annapolis, Maryland, June 2008.
+
+[120] Andrew Tucker, Anoop Gupta, and Shigeru Urushibara. The Impact of Operating System Scheduling Policies and Synchronization Methods on the Performance of Parallel Applications. In Proceedings of the 1991 ACM SIGMETRICS Conference on Measurement and Modeling of Computer
+Systems (SIGMETRICS ’91), San Diego, California, May 1991.
+
+[121] Bhuvan Urgaonkar, Prashant Shenoy, and Timothy Roscoe. Resource overbooking and application profiling in a shared internet hosting platform. ACM Transactions on Internet Technology, 9(1):1–45, 2009.
+
+[122] Raj Vaswani, and John Zahorjan. The Implications of Cache Affinity on Processor Scheduling for Multiprogrammed, Shared Memory Multiprocessors. In Proceedings of the 13th ACM Symposium on Operating Systems Principles (SOSP ’91), Pacific Grove, California, October 1991.
+
+[123] Thiemo Voigt, and Per Gunningberg. Adaptive resource-based web server admission control. In The Seventh IEEE Symposium on Computers and Communications (ISCC ’02), Giardini Naxos, Italy, July 2002.
+
+[124] Thiemo Voigt, Renu Tewari, Douglas Freimuth, and Ashish Mehra. Kernel mechanisms for service differentiation in overloaded web servers. In Proceedings of the USENIX Annual Technical Conference (USENIX ’02), pages 189–202, Monterey, California, June 2002.
+
+[125] Carl A. Waldspurger, and William E. Weihl. Lottery scheduling: flexible proportional-share resource management. In Proceedings of the 1st Symposium on Operating Systems Design and Implementation (OSDI ’94), Monterey, California, November 1994.
+
+[126] Carl A.Waldspurger, andWilliam E.Weihl. Stride scheduling: Deterministic proportional- share resource management. Technical Report TM-528, Massachusetts Institute of Technology, 1995.
+
+[127] Matt Welsh, David Culler, and Eric Brewer. SEDA: An Architecture for Well-Conditioned, Scalable Internet Services. In Proceedings of the 18th ACM Symposium on Operating Systems Principles (SOSP ’01), Banff, Canada, October 2001.
+
+[128] Windows. Windows azure platform, 2010. URL http://www.microsoft.com/windowsazure.
+
+[129] Bruce L. Worthington, Gregory R. Ganger, Yale N. Patt, and John Wilkes. On-line extraction of scsi disk drive parameters. In Proceedings of the joint international conference on Measurement and modeling of computer systems, SIGMETRICS ’95/PERFORMANCE ’95, pages 146–156, 1995.
+
+[130] Ting Yang, Tongping Liu, Emery D. Berger, Scott F. Kaplan, and J. Eliot B. Moss. Redline: First class support for interactivity in commodity operating systems. In Proceedings of the 8th Symposium on Operating Systems Design and Implementation (OSDI ’08), pages 73–86, San Diego, California, December 2008.
+
+[131] Kamen Yotov, Keshav Pingali, and Paul Stodghill. Automatic measurement of memory hierarchy parameters. In Proceedings of the 2005 ACM SIGMETRICS Conference on Measurement and Modeling of Computer Systems (SIGMETRICS ’05), pages 181–192, Banff, Canada, June 2005.
+
+[132] J. Zahorjan, E.D. Lazowska, and D.L. Eager. The Effect of Scheduling Discipline on Spin Overhead in Shared Memory Parallel Processors. IEEE Transactions on Parallel and Distributed System, 2(2):180–198, April 1991.
+
+[133] Alan Zeichick. Frequently asked questions: NUMA, SMP, and AMDs direct connect architecture, August 2006. URL http://developer.amd.com/pages/810200618.aspx.
+
+[134] ZenWalk. ZenWalk 6.4 is Ready. URL http://www.zenwalk.org/modules/news/article.php?storyid=107.
