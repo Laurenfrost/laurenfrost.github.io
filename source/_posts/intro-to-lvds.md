@@ -112,13 +112,17 @@ OLDI协议中，LVDS接口基本分这样的几类：单路6 bit、双路6 bit�
 ## 参考文献  
 
 <div id="refer-1"></div>  
-- [1] 辻嘉樹. 差動伝送の基本「LVDS技術」徹底理解 [M/OL]. レクロイ･ジャパン株式会社.  
+<p>
+[1] 辻嘉樹. 差動伝送の基本「LVDS技術」徹底理解 [M/OL]. レクロイ･ジャパン株式会社.  
 https://teledynelecroy.com/japan/pdf/semi/cq2008-tech-semi.pdf  
-
+</p>
 <div id="refer-2"></div>  
-- [2] LVDS Owner's Manual Design Guide, 4th Edition [M/OL]. Texas Instruments.  
+<p>
+[2] LVDS Owner's Manual Design Guide, 4th Edition [M/OL]. Texas Instruments.  
 https://www.ti.com/lit/snla187  
-
+</p>
 <div id="refer-3"></div>  
-- [3] LVDS Display Interface (LDI) TFT Data Mapping for Interoperability wFPD-Link. [M/OL]. Texas Instruments.  
+<p>
+[3] LVDS Display Interface (LDI) TFT Data Mapping for Interoperability wFPD-Link. [M/OL]. Texas Instruments.  
 https://www.ti.com/lit/pdf/snla014  
+</p>
