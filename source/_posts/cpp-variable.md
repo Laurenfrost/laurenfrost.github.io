@@ -1,5 +1,5 @@
 ---
-title: C++变量回顾(更新中)
+title: C++变量回顾
 date: 2020-07-12 19:50:30
 tags: C++
 category: 并行计算

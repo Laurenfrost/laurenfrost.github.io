@@ -1,5 +1,5 @@
 ---
-title: rocBLAS矩阵求逆函数trtri()源码分析（更新中）
+title: rocBLAS矩阵求逆函数trtri()源码分析
 date: 2020-04-23 21:36:22
 tags: BLAS
 category: 异构计算  
