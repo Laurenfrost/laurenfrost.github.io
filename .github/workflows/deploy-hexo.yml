@@ -54,3 +54,7 @@ jobs:
           hexo clean
           hexo generate 
           hexo deploy
+          
+      - name: update hexo file
+        run: |
+          git push git@github.com:Laurenfrost/laurenfrost.github.io.git hexo:hexo
