@@ -54,3 +54,9 @@ jobs:
           hexo clean
           hexo generate 
           hexo deploy
+          
+      #- name: Update hexo file
+      #  run: |
+      #    git add -A
+      #    git commit -m "auto update by Github Action"
+      #    git push git@github.com:Laurenfrost/laurenfrost.github.io.git hexo:hexo
