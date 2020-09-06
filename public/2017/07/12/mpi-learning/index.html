@@ -1,0 +1,803 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>MPI学习 | Frozen Sphere</title><script src="https://cdn.bootcss.com/valine/1.4.4/Valine.min.js"></script><link rel="stylesheet" href="/css/arknights.css"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/highlight.js/10.1.2/styles/atom-one-dark-reasonable.min.css"><meta name="generator" content="Hexo 5.0.2"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head><body><header><nav><a href="/">Home</a><a href="/archives">Archives</a><a href="/friends">Friends</a><a href="/about">About</a></nav></header><main><article><div id="post-bg"><div id="post-title"><div id="post-info"><span>date:<time datetime="2017-07-12T15:39:21.000Z" id="date"> 2017-07-12</time></span><br><span>updated:<time datetime="2020-09-06T08:49:58.632Z" id="updated"> 2020-09-06</time></span></div><h1>MPI学习</h1><hr></div><div id="post-content"><h2 id="过程说明"><a href="#过程说明" class="headerlink" title="过程说明"></a>过程说明</h2><p>MPI 通过某种语言指定 MPI 的函数。过程调用的参数有 IN (输入)、OUT (输出) 或 INOUT (输入/输出)。含义如下：  </p>
+<ol>
+<li>调用时使用的但没有修改的参数记为IN,  </li>
+<li>调用时可以修改的参数记为OUT,  </li>
+<li>调用时使用的并可修改的参数记为INOUT。  </li>
+</ol>
+<p><em>有一种特殊情况－－如果一个参数是**</em>隐含对象**<em>的一个句柄，并且这个对象被过程调用修改，那么这个参数记为OUT。即使句柄本身没被修改，仍记为OUT－－我们用OUT属性表示句柄所引用的部分被修改。</em><br><em>2019.04.09补充： INOUT参数是Fortran里的用法</em>  </p>
+<hr>
+<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><h3 id="函数原型讲解"><a href="#函数原型讲解" class="headerlink" title="函数原型讲解"></a>函数原型讲解</h3><h4 id="MPI-INIT"><a href="#MPI-INIT" class="headerlink" title="MPI_INIT()"></a>MPI_INIT()</h4><p>初始化MPI系统。<br>原型：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plain">int MPI_Init(  <br>    int*       argc_p           &#x2F;* int&#x2F;out *&#x2F;,  <br>    char***    argv_p           &#x2F;* int&#x2F;out *&#x2F;);  <br></code></pre></td></tr></table></figure>
+<p>参数<code>argc_p</code>和<code>argv_p</code>是指向参数<code>argc</code>和<code>argv</code>的指针，该函数返回一个int类型的错误码。程序不使用<code>argc_p</code>和<code>argv_p</code>时，置<code>NULL</code>即可。<br>必须在任何其它MPI例程之前被调用。它必须至少被调用一次；随后的调用是错误的。<br><em>一般忽略该函数返回的错误码。</em>  </p>
+<h4 id="MPI-FINALIZE"><a href="#MPI-FINALIZE" class="headerlink" title="MPI_FINALIZE()"></a>MPI_FINALIZE()</h4><p>MPI系统使用完毕，清除所有MPI状态，释放所有为MPI分配的资源。<br>原型： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plain">int MPI_Finalize(void);  <br></code></pre></td></tr></table></figure>
+<p><em>一旦调用此例程，就不调用MPI例程。用户必须确定在进程调用MPI_FINALIZE前，所有涉及此进程的挂起的通信完成。</em>  </p>
+<h4 id="MPI-INITALIZED"><a href="#MPI-INITALIZED" class="headerlink" title="MPI_INITALIZED()"></a>MPI_INITALIZED()</h4><p>检查是否已经完成了MPI的初始化。<br>原型：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs plain">int MPI_Initialized(  <br>    int*          flag            &#x2F;* out *&#x2F;);  <br></code></pre></td></tr></table></figure>
+<p>如果已经调用<code>MPI_INIT()</code>，<code>flag</code>为<code>true</code>；否则为<code>false</code>。<br>该函数用于决定是否调用<code>MPI_INIT()</code>。<br><em>它是唯一的可以在<code>MPI_INIT()</code>前调用的函数。</em>  </p>
+<h4 id="MPI-ABORT"><a href="#MPI-ABORT" class="headerlink" title="MPI_ABORT()"></a>MPI_ABORT()</h4><p>进行最大的尝试，来退出<code>comm</code>组的所有任务。<br>原型：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plain">int MPI_Abort(  <br>    MPI_Comm      comm            &#x2F;* in *&#x2F;,  <br>    int           errorcode       &#x2F;* in *&#x2F;);  <br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="通信子和组"><a href="#通信子和组" class="headerlink" title="通信子和组"></a>通信子和组</h2><h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><p>为了理解 MPI 中的组与通信子，我们先来了解以下这些名词的概念以及联系。  </p>
+<h4 id="组（group）"><a href="#组（group）" class="headerlink" title="组（group）"></a>组（group）</h4><p>组是一些<u><em>进程标志符</em></u>的一个<em>有序集</em>（不是进程的集合）。进程是与实现相关的对象。<br>每一个进程都有一个绝对的编号，即pid号。<br>同一个进程可以同时属于多个进程组（每个进程在不同进程组中有个各自的rank号，而在一个组内，每个进程的rank是唯一的 ，rank连续且从0开始。）<br>它本质表示通信子中所有进程的集合。**<em>一个通信子对应一个进程组。**</em><br>也就是说组对象存在于通信子环境内，给通信子定义和描述通信参与者（进程），并提供表示和管理进程的若干功能。<br>组用模糊的组对象来描述，因此不能直接从一个进程到另一个进程传送。<br>可在一个通信子使用组来描述通信空间中的参与者并对这些参与者进行分级（这样在通信空间中为它们赋予了唯一的名字）  </p>
+<h4 id="上下文（context）"><a href="#上下文（context）" class="headerlink" title="上下文（context）"></a>上下文（context）</h4><p>上下文只是划分通信空间时所用的一个抽象概念，只是通信子所具有的一个属性，不是显式的 MPI 对象，它们仅作为通信子实现的一部分而出现。<br>比如说：<br>在组间通信中（严格的点对点通信），每个通信子中都存放这两个上下文标志，一个在组 A 中用于发送，在组 B 中用于接收，第二个在组 B 中用于发送，在组 A 中用于接收。<br>同一进程内的不同通信子有不同的上下文。上下文实质上是一个系统管理的标志，用于保证通信子在点对点和 MPI 定义的集合通信中的安全性。安全意味着同一通信子内的集合和点对点通信互不干扰，而且不同通信子上的通信也互不干扰。  </p>
+<h4 id="通信子（communicator）"><a href="#通信子（communicator）" class="headerlink" title="通信子（communicator）"></a>通信子（communicator）</h4><p>通信子定义了封装 MPI 通信的基本模型，是一个综合的通信概念。<br>它包括上下文（context）、进程组（group）、虚拟处理器拓扑（topology）。<br>通信子可分为两类：组内通信子（intra-communicator）和组间通信子（inter-communicator）。  </p>
+<ul>
+<li>组内通信子（intra-communicator）  </li>
+<li>组间通信子（inter-communicator）  </li>
+</ul>
+<h5 id="默认通信子"><a href="#默认通信子" class="headerlink" title="默认通信子"></a>默认通信子</h5><p><code>MPI_COMM_WORLD</code><br>函数<code>MPI_Init()</code>的调用过程中，将用户启动的所有进程组了一个组（通信子），该通信子即为<code>MPI_COMM_WORLD</code>。  </p>
+<h3 id="通信域的产生"><a href="#通信域的产生" class="headerlink" title="通信域的产生"></a>通信域的产生</h3><p>通信域产生的方法。根据看过的资料，大概有三种方法，先简要了解路子即可：  </p>
+<h4 id="在已有通信域基础上划分获得"><a href="#在已有通信域基础上划分获得" class="headerlink" title="在已有通信域基础上划分获得"></a>在已有通信域基础上划分获得</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs plain">MPI_Comm_split(<br>    MPI_Comm        comm, <br>    int             color, <br>    int             key, <br>    MPI_Comm*       newcomm);<br></code></pre></td></tr></table></figure>
+<h4 id="在已有通信域基础上复制获得"><a href="#在已有通信域基础上复制获得" class="headerlink" title="在已有通信域基础上复制获得"></a>在已有通信域基础上复制获得</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plain">MPI_Comm_dup(<br>    MPI_Comm        comm, <br>    MPI_Comm*       newcomm);<br></code></pre></td></tr></table></figure>
+<h4 id="在已有进程组的基础上创建获得"><a href="#在已有进程组的基础上创建获得" class="headerlink" title="在已有进程组的基础上创建获得"></a>在已有进程组的基础上创建获得</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs plain">MPI_Comm_create(<br>    MPI_Comm        comm, <br>    MPI_Group       group, <br>    MPI_Comm*       newcomm);<br></code></pre></td></tr></table></figure>
+
+<h3 id="常用函数"><a href="#常用函数" class="headerlink" title="常用函数"></a>常用函数</h3><h4 id="MPI-COMM-SIZE"><a href="#MPI-COMM-SIZE" class="headerlink" title="MPI_COMM_SIZE()"></a>MPI_COMM_SIZE()</h4><p>查询一个通信子内的进程总数。<br>原型： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plain">int MPI_Comm_size(<br>    MPI_Comm        comm            &#x2F;* int *&#x2F;,<br>    int*            comm_sz_p       &#x2F;* out *&#x2F;);<br></code></pre></td></tr></table></figure>
+<h4 id="MPI-COMM-RANK"><a href="#MPI-COMM-RANK" class="headerlink" title="MPI_COMM_RANK()"></a>MPI_COMM_RANK()</h4><p>查询本进程在通信子内的进程号。<br>原型：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plain">int MPI_Comm_rank(<br>    MPI_Comm        comm            &#x2F;* in *&#x2F;,<br>    int*            my_rank_p       &#x2F;* out *&#x2F;);<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="点对点通信"><a href="#点对点通信" class="headerlink" title="点对点通信"></a>点对点通信</h2><p>由进程完成的消息的发送和接收是基本的MPI通信机制。基本的点对点通信操作是send和receive。  </p>
+<h3 id="阻塞通信"><a href="#阻塞通信" class="headerlink" title="阻塞通信"></a>阻塞通信</h3><p>MPI最常被使用到的函数就是<code>MPI_Send()</code>和<code>MPI_Recv()</code>，其作用自然是一目了然，不必多说，但这两种函数的语义有着潜在的陷阱。<br>如果一个进程试图接收消息，但没有相匹配的消息，那么这个进程就会一直阻塞在那里，即进程悬挂；<br>如果一个进程试图发送消息，会由MPI系统决定这个消息是否进入消息缓存。假如MPI缓存了消息，那么在该消息被接收以前，发送调用就可以完成了。但假如因性能等原因, MPI选择不缓存消息，那么这个进程也会阻塞在那里，直到消息被接收。所以我们称这种通信叫：阻塞发送、阻塞接收。  </p>
+<h4 id="MPI-SEND"><a href="#MPI-SEND" class="headerlink" title="MPI_SEND()"></a>MPI_SEND()</h4><p>发送消息。<br>原型：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs plain">int MPI_Send(<br>    void*           msg_buf_p       &#x2F;* in *&#x2F;,<br>    int             msg_size        &#x2F;* in *&#x2F;,<br>    MPI_Datatype    msg_type        &#x2F;* in *&#x2F;,<br>    int             dest            &#x2F;* in *&#x2F;,<br>    int             tag             &#x2F;* in *&#x2F;,<br>    MPI_Comm        comm            &#x2F;* in *&#x2F;);<br></code></pre></td></tr></table></figure>
+<p>由上至下，分别是：  </p>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>msg_buf_p</code></td>
+<td>要发送的数据指针</td>
+</tr>
+<tr>
+<td><code>msg_size</code></td>
+<td>要发送的数据大小</td>
+</tr>
+<tr>
+<td><code>msg_type</code></td>
+<td>要发送的数据类型</td>
+</tr>
+<tr>
+<td><code>dest</code></td>
+<td>接收这个数据的进程编号</td>
+</tr>
+<tr>
+<td><code>tag</code></td>
+<td>该数据用途的补充说明</td>
+</tr>
+<tr>
+<td><code>comm</code></td>
+<td>通信子</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>关于<code>MPI_Datatype</code>：  </p>
+<blockquote>
+<p>MPI中传输的数据类型是预先定义好了的。 </p>
+<table>
+<thead>
+<tr>
+<th>MPI datatype</th>
+<th>C datatype</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>MPI_CHAR</code></td>
+<td><code>signed char</code></td>
+</tr>
+<tr>
+<td><code>MPI_SHORT</code></td>
+<td><code>signed short int</code></td>
+</tr>
+<tr>
+<td><code>MPI_INT</code></td>
+<td><code>signed int</code></td>
+</tr>
+<tr>
+<td><code>MPI_LONG</code></td>
+<td><code>signed long int</code></td>
+</tr>
+<tr>
+<td><code>MPI_UNSIGNED_CHAR</code></td>
+<td><code>unsigned char</code></td>
+</tr>
+<tr>
+<td><code>MPI_UNSIGNED_SHORT</code></td>
+<td><code>unsigned short int</code></td>
+</tr>
+<tr>
+<td><code>MPI_UNSIGNED</code></td>
+<td><code>unsigned int</code></td>
+</tr>
+<tr>
+<td><code>MPI_UNSIGNED_LONG</code></td>
+<td><code>unsigned long int</code></td>
+</tr>
+<tr>
+<td><code>MPI_FLOAT</code></td>
+<td><code>float</code></td>
+</tr>
+<tr>
+<td><code>MPI_DOUBLE</code></td>
+<td><code>double</code></td>
+</tr>
+<tr>
+<td><code>MPI_LONG_DOUBLE</code></td>
+<td><code>long double</code></td>
+</tr>
+<tr>
+<td><code>MPI_BYTE</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>MPI_PACKED</code></td>
+<td></td>
+</tr>
+</tbody></table>
+<p><em><code>MPI_BYTE</code>是一个由8个二进制位组成的值（即一个字节）。不同于一个字符，一个字节是不用解释的。</em><br><em><code>MPI_PACKED</code>则是一个数据包。</em>  </p>
+</blockquote>
+<p>关于<code>tag</code>：  </p>
+<blockquote>
+<p>该参数是非负<code>int</code>型，用于区分看上去完全一样的数据。实际运用场景中，进程之间会有大量数据的交流，有些数据用于计算，有些用于输出。为了区分它们，我们常常把他们加个标签（<code>tag</code>），比如用于计算的标记为<code>0</code>，用于输出的标记为<code>1</code>。这些都是自己规定的。 </p>
+</blockquote>
+<p>关于<code>msg_size</code>：  </p>
+<blockquote>
+<p><code>msg_size</code>和<code>msg_type</code>两个参数共同决定要发送的数据量。<br>如果要发送字符串，<code>msg_size</code>需要加上字符串结束符<code>\0</code>所占的字符数量，msg_type就是MPI_CHAR。  </p>
+</blockquote>
+</blockquote>
+<h4 id="MPI-RECV"><a href="#MPI-RECV" class="headerlink" title="MPI_RECV()"></a>MPI_RECV()</h4><p>接收MPI_SEND()发送的消息。<br>原型：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs plain">int MPI_Recv(<br>    void*           msg_buf_p       &#x2F;* out *&#x2F;,<br>    int             buf_size        &#x2F;* in *&#x2F;,<br>    MPI_Datatype    buf_type        &#x2F;* in *&#x2F;,<br>    int             source          &#x2F;* in *&#x2F;,<br>    int             tag             &#x2F;* in *&#x2F;,<br>    MPI_Comm        comm            &#x2F;* in *&#x2F;,<br>    MPI_Status*     status_p        &#x2F;* out *&#x2F;);<br></code></pre></td></tr></table></figure>
+<p>由上至下，分别是：  </p>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>msg_buf_p</code></td>
+<td>要接收的数据指针</td>
+</tr>
+<tr>
+<td><code>buf_size</code></td>
+<td>要接收的数据大小</td>
+</tr>
+<tr>
+<td><code>buf_type</code></td>
+<td>要接收的数据类型</td>
+</tr>
+<tr>
+<td><code>source</code></td>
+<td>发送这个数据的进程号</td>
+</tr>
+<tr>
+<td><code>tag</code></td>
+<td>该数据用途的补充说明</td>
+</tr>
+<tr>
+<td><code>comm</code></td>
+<td>通信子</td>
+</tr>
+<tr>
+<td><code>status_p</code></td>
+<td>该数据的其他信息</td>
+</tr>
+</tbody></table>
+<p><em>注意，要使得通信正常完成，需要<code>recv_buf_type = send_msg_type</code>，<code>recv_buf_size &gt;= send_msg_size</code>。而且<code>tag</code>要一致。</em>  </p>
+<blockquote>
+<p>关于通配符：</p>
+<blockquote>
+<p>MPI允许接收者忽略消息来源和标签等信息。<br>这时就可以给<code>source</code>赋值为<code>MPI_ANY_SOURCE</code>，给<code>tag</code>   赋值为<code>MPI_ANY_TAG</code>。<br>像这样的特殊常量，被称作通配符（wildcard）。<br><em>只有接收者可以使用通配符，也就是说MPI的通信方式是push而不是pull。</em>  </p>
+</blockquote>
+<p>关于<code>status_p</code>：  </p>
+<blockquote>
+<p>一般我们不使用这个参数，直接给它赋值<code>MPI_STATUS_IGNORE</code>即可。但当我们使用通配符时，有可能我们即使接收到信息，也不知道这个消息的<code>size</code>、<code>source</code>、<code>tag</code>等信息。所以当有这种需要的时候，就会使用参数<code>status_p</code>。<br><code>status_p</code>的数据类型是<code>MPI_Status</code>，这是一个有至少三个成员的结构，包含<code>MPI_SOURCE</code>、<code>MPI_TAG</code>和<code>MPI_ERROR</code>。<br>使用前我们需要先进行如下定义：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plain">MPI_Status  status;  <br></code></pre></td></tr></table></figure>
+<p>然后，将<code>&amp;status</code>作为最后一个参数传递给<code>MPI_Recv</code>之后，就可以检查以下两个成员来确定<code>source</code>和<code>tag</code>了： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs plain">status.MPI_SOURCE<br>status.MPI_TAG<br></code></pre></td></tr></table></figure>
+<p>但是<code>size</code>这个信息则不在应用程序可以直接访问到的域中，我们需要调用函数<code>MPI_Get_count</code>找回它。<br>该函数原型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs plain">int MPI_Get_count(<br>    MPI_Status*         status_p        &#x2F;* in *&#x2F;,<br>    MPI_Datatype        type            &#x2F;* in *&#x2F;,<br>    int*                count_p         &#x2F;* out *&#x2F;);<br></code></pre></td></tr></table></figure>
+<p>函数通过<code>count</code>参数返回接收到的元素数量。<em>但如果<code>count</code>这个信息不是必须的，就没有必要为这个值浪费一次计算。</em>  </p>
+</blockquote>
+</blockquote>
+<h4 id="MPI-SENDRECV"><a href="#MPI-SENDRECV" class="headerlink" title="MPI_SENDRECV()"></a>MPI_SENDRECV()</h4><p>接收另一个进程里的<code>MPI_Sendrecv()</code>发送的消息，相当于<code>MPI_Send()</code>和<code>MPI_Recv()</code>合二为一。<br>原型：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs plain">int MPI_Sendrecv(<br>    void*           send_buf_p      &#x2F;* in *&#x2F;,<br>    int             send_size       &#x2F;* in *&#x2F;,<br>    MPI_Datatype    send_type       &#x2F;* in *&#x2F;,<br>    int             dest            &#x2F;* in *&#x2F;,<br>    int             send_tag        &#x2F;* in *&#x2F;,<br>    void*           recv_buf_p      &#x2F;* out *&#x2F;,<br>    int             recv_size       &#x2F;* in *&#x2F;,<br>    MPI_Datatype    recv_type       &#x2F;* in *&#x2F;,<br>    int             source          &#x2F;* in *&#x2F;,<br>    int             recv_tag        &#x2F;* in *&#x2F;,<br>    MPI_Comm        comm            &#x2F;* in *&#x2F;,<br>    MPI_Status*     status_p        &#x2F;* out *&#x2F;); <br></code></pre></td></tr></table></figure>
+<p>由上至下，分别是：  </p>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>send_buf_p</code></td>
+<td>要发送的数据指针</td>
+</tr>
+<tr>
+<td><code>send_size</code></td>
+<td>要发送的数据大小</td>
+</tr>
+<tr>
+<td><code>send_type</code></td>
+<td>要发送的数据类型</td>
+</tr>
+<tr>
+<td><code>dest</code></td>
+<td>目的进程号</td>
+</tr>
+<tr>
+<td><code>send_tag</code></td>
+<td>该数据用途的补充说明</td>
+</tr>
+<tr>
+<td><code>recv_buf_p</code></td>
+<td>要接收的数据指针</td>
+</tr>
+<tr>
+<td><code>recv_size</code></td>
+<td>要接收的数据类型</td>
+</tr>
+<tr>
+<td><code>source</code></td>
+<td>源进程号</td>
+</tr>
+<tr>
+<td><code>recv_tag</code></td>
+<td>该数据用途的补充说明</td>
+</tr>
+<tr>
+<td><code>comm</code></td>
+<td>通信子</td>
+</tr>
+<tr>
+<td><code>status_p</code></td>
+<td>该数据的其他信息</td>
+</tr>
+</tbody></table>
+<h3 id="非阻塞通信"><a href="#非阻塞通信" class="headerlink" title="非阻塞通信"></a>非阻塞通信</h3><p>虽然名字叫非阻塞通信，但本质上的通信的过程依然是阻塞的，只不过是暂时解放了当前进程，可以不用干等罢了。<br>TODO  </p>
+<hr>
+<h2 id="集合通信"><a href="#集合通信" class="headerlink" title="集合通信"></a>集合通信</h2><p>集合通信，顾名思义是一组进程间的通信。<br>在MPI中这类函数包括:</p>
+<ul>
+<li>栅障同步（barrier synchronization）</li>
+<li><ul>
+<li>使组内所有进程同步</li>
+</ul>
+</li>
+<li></li>
+<li>广播（broadcast）</li>
+<li><ul>
+<li>一个进程向一条消息广播发送到组内的所有进程,包括它本身在内</li>
+</ul>
+</li>
+<li></li>
+<li>收集（gather）</li>
+<li><ul>
+<li>一个进程从组内所有进程收集数据</li>
+</ul>
+</li>
+<li></li>
+<li>分散（scatter）</li>
+<li><ul>
+<li>一个进程向组内所有进程分发数据</li>
+</ul>
+</li>
+<li></li>
+<li>归约（reduce）</li>
+<li><ul>
+<li>一个进程将组内每个进程输入缓冲区中的数据组合起来并求解</li>
+</ul>
+</li>
+<li></li>
+<li>全局规约（all reduce）</li>
+<li><ul>
+<li>规约之后把结果返回给组内所有进程</li>
+</ul>
+</li>
+<li></li>
+<li>规约分散（reduce-scatter）</li>
+<li><ul>
+<li>规约之后分发结果</li>
+</ul>
+</li>
+<li></li>
+<li>全局收集（all gether）</li>
+<li><ul>
+<li>收集数据之后把收集到的数据返回给组内所有进程</li>
+</ul>
+</li>
+<li></li>
+<li>搜索（scan）</li>
+</ul>
+<h3 id="函数原型讲解-1"><a href="#函数原型讲解-1" class="headerlink" title="函数原型讲解"></a>函数原型讲解</h3><h4 id="MPI-REDUCE"><a href="#MPI-REDUCE" class="headerlink" title="MPI_REDUCE()"></a>MPI_REDUCE()</h4><p>储存全局操作的结果（比如求全局总和）到指定进程。<br>原型：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs plain">int MPI_Reduce(<br>    void*           input_data_p        &#x2F;* in *&#x2F;,<br>    void*           output_data_p       &#x2F;* out *&#x2F;,<br>    int             count               &#x2F;* in *&#x2F;,<br>    MPI_Datatype    datatype            &#x2F;* in *&#x2F;,<br>    MPI_Op          operator            &#x2F;* in *&#x2F;,<br>    int             dest_process        &#x2F;* in *&#x2F;,<br>    MPI_Comm        comm                &#x2F;* in *&#x2F;);<br></code></pre></td></tr></table></figure>
+<p>由上至下，分别为： </p>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>input_data_p</code></td>
+<td>要输入的数据指针</td>
+</tr>
+<tr>
+<td><code>output_data_p</code></td>
+<td>要输出的数据指针</td>
+</tr>
+<tr>
+<td><code>count</code></td>
+<td>要输入的数据的数据量</td>
+</tr>
+<tr>
+<td><code>datatype</code></td>
+<td>数据类型</td>
+</tr>
+<tr>
+<td><code>operator</code></td>
+<td>要对整合的的数据进行的操作</td>
+</tr>
+<tr>
+<td><code>dest_process</code></td>
+<td>输出数据的接收进程</td>
+</tr>
+<tr>
+<td><code>comm</code></td>
+<td>通信子</td>
+</tr>
+</tbody></table>
+<p><em>如果<code>count</code>的参数大于<code>1</code>，那么函数<code>MPI_Reduce()</code>就可以应用到数组上，比如向量的加减法。</em>  </p>
+<blockquote>
+<p>关于<code>MPI_Op</code>：  </p>
+<blockquote>
+<p>MPI系统已经预定义了一些规约操作符  </p>
+<table>
+<thead>
+<tr>
+<th>操作符</th>
+<th>实际操作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>MPI_MAX</code></td>
+<td>最大值</td>
+</tr>
+<tr>
+<td><code>MPI_MIN</code></td>
+<td>最小值</td>
+</tr>
+<tr>
+<td><code>MPI_SUM</code></td>
+<td>求和</td>
+</tr>
+<tr>
+<td><code>MPI_PROD</code></td>
+<td>求积</td>
+</tr>
+<tr>
+<td><code>MPI_LAND</code></td>
+<td>逻辑与</td>
+</tr>
+<tr>
+<td><code>MPI_BAND</code></td>
+<td>按位与</td>
+</tr>
+<tr>
+<td><code>MPI_LOR</code></td>
+<td>逻辑或</td>
+</tr>
+<tr>
+<td><code>MPI_BOR</code></td>
+<td>按位或</td>
+</tr>
+<tr>
+<td><code>MPI_LXOR</code></td>
+<td>逻辑异或</td>
+</tr>
+<tr>
+<td><code>MPI_BXOR</code></td>
+<td>按位异或</td>
+</tr>
+<tr>
+<td><code>MPI_MAXLOC</code></td>
+<td>最大值且相应位置</td>
+</tr>
+<tr>
+<td><code>MPI_MINLOC</code></td>
+<td>最小值且相应位置</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>关于预设操作<code>MPI_MAXLOC</code>和<code>MPI_MINLOC</code>：<br>这两个操作的一个用途是计算一个全局最小值(最大值)和这个值所在的进程序列号。使用这样的操作时需要注意：此时<code>output_data_p</code>返回则是<code>（u，r）</code>的指针。前者是极值，后者是进程号。而且<code>datatype</code>需要使用MPI系统另设的常数  </p>
+<table>
+<thead>
+<tr>
+<th>名字</th>
+<th>u的数据类型</th>
+<th>r的数据类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>MPI_FLOAT_INT</code></td>
+<td><code>float</code></td>
+<td><code>int</code></td>
+</tr>
+<tr>
+<td><code>MPI_DOUBLE_INT</code></td>
+<td><code>double</code></td>
+<td><code>int</code></td>
+</tr>
+<tr>
+<td><code>MPI_LONG_INT</code></td>
+<td><code>long int</code></td>
+<td><code>int</code></td>
+</tr>
+<tr>
+<td><code>MPI_2INT</code></td>
+<td><code>int</code></td>
+<td><code>int</code></td>
+</tr>
+<tr>
+<td><code>MPI_SHORT_INT</code></td>
+<td><code>short int</code></td>
+<td><code>int</code></td>
+</tr>
+<tr>
+<td><code>MPI_LONG_DOUBLE_INT</code></td>
+<td><code>long double</code></td>
+<td><code>int</code></td>
+</tr>
+</tbody></table>
+<p>可以看出在C语言描述里<code>r</code>一定是整型量。 </p>
+</blockquote>
+<p>用户也可以自定义操作。函数<code>MPI_OP_CREATE()</code>将用户自定义的操作和<code>op</code>绑定在一起。  </p>
+<blockquote>
+<p>参数<code>MPI_Op</code>在函数<br><code>MPI_REDUCE()</code><br><code>MPI_ALLREDUCE()</code><br><code>MPI_REDUCE_SCATTER()</code><br><code>MPI_SCAN()</code><br>中均可使用，包括用户自定义操作。  </p>
+</blockquote>
+</blockquote>
+</blockquote>
+<h4 id="MPI-ALLREDUCE"><a href="#MPI-ALLREDUCE" class="headerlink" title="MPI_ALLREDUCE()"></a>MPI_ALLREDUCE()</h4><p>储存全局操作的结果（比如求全局总和）并返回到所有进程。<br>原型：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs plain">int MPI_Allreduce(<br>    void*           input_data_p        &#x2F;* in *&#x2F;,<br>    void*           output_data_p       &#x2F;* out *&#x2F;,<br>    int             count               &#x2F;* in *&#x2F;,<br>    MPI_Datatype    datatype            &#x2F;* in *&#x2F;,<br>    MPI_Op          operator            &#x2F;* in *&#x2F;,<br>    MPI_Comm        comm                &#x2F;* in *&#x2F;);<br></code></pre></td></tr></table></figure>
+<p>由上至下，分别为：  </p>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>input_data_p</code></td>
+<td>要输入的数据指针</td>
+</tr>
+<tr>
+<td><code>output_data_p</code></td>
+<td>要输出的数据指针</td>
+</tr>
+<tr>
+<td><code>count</code></td>
+<td>要输入的数据量</td>
+</tr>
+<tr>
+<td><code>datatype</code></td>
+<td>数据类型</td>
+</tr>
+<tr>
+<td><code>operator</code></td>
+<td>对整合的数据进行的操作</td>
+</tr>
+<tr>
+<td><code>comm</code></td>
+<td>通信子</td>
+</tr>
+</tbody></table>
+<p>全局归约操作(all-reduce)可以由归约操作(reduce)和广播操作(broadcast)来实现,但直接实现可以获得更好的性能。  </p>
+<h4 id="MPI-BCAST"><a href="#MPI-BCAST" class="headerlink" title="MPI_BCAST()"></a>MPI_BCAST()</h4><p>将属于一个进程的数据发送给通信子中的所有进程。<br>原型：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs plain">int MPI_Bcast(<br>    void*           data_p              &#x2F;* in&#x2F;out *&#x2F;,<br>    int             count               &#x2F;* in *&#x2F;,<br>    MPI_Datatype    datatype            &#x2F;* in *&#x2F;,<br>    int             source_proc         &#x2F;* in *&#x2F;,<br>    MPI_Comm        comm                &#x2F;* in *&#x2F;);<br></code></pre></td></tr></table></figure>
+<p>由上至下，分别为：  </p>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>data_p</code></td>
+<td>要广播的数据指针</td>
+</tr>
+<tr>
+<td><code>count</code></td>
+<td>要广播的数据量</td>
+</tr>
+<tr>
+<td><code>datatype</code></td>
+<td>数据类型</td>
+</tr>
+<tr>
+<td><code>source_proc</code></td>
+<td>广播者的进程号</td>
+</tr>
+<tr>
+<td><code>comm</code></td>
+<td>通信子</td>
+</tr>
+</tbody></table>
+<h4 id="MPI-SCATTER"><a href="#MPI-SCATTER" class="headerlink" title="MPI_SCATTER()"></a>MPI_SCATTER()</h4><p>把一组量为n的数据分成(64&amp;n/(comm_sz))分，分别发给通信子内所有进程。<br>原型：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs plain">int MPI_Scatter(<br>    void*           send_buf_p      &#x2F;* in *&#x2F;,<br>    int             send_count      &#x2F;* in *&#x2F;,<br>    MPI_Datatype    send_type       &#x2F;* in *&#x2F;,<br>    void*           recv_buf_p      &#x2F;* out *&#x2F;,<br>    int             recv_count      &#x2F;* in *&#x2F;,<br>    MPI_Datatype    recv_type       &#x2F;* in *&#x2F;,<br>    int             src_proc        &#x2F;* in *&#x2F;,<br>    MPI_Comm        comm            &#x2F;* in *&#x2F;);<br></code></pre></td></tr></table></figure>
+<p>由上至下，分别为：  </p>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>send_buf_p</code></td>
+<td>要发送的数据指针</td>
+</tr>
+<tr>
+<td><code>send_count</code></td>
+<td>发送到各个进程的数据个数(仅对于根进程)</td>
+</tr>
+<tr>
+<td><code>send_type</code></td>
+<td>要发送的数据类型</td>
+</tr>
+<tr>
+<td><code>recv_buf_p</code></td>
+<td>接收数据指针</td>
+</tr>
+<tr>
+<td><code>recv_count</code></td>
+<td>待接收的元素个数</td>
+</tr>
+<tr>
+<td><code>recv_type</code></td>
+<td>接收数据类型</td>
+</tr>
+<tr>
+<td><code>src_proc</code></td>
+<td>发送进程的进程号</td>
+</tr>
+<tr>
+<td><code>comm</code></td>
+<td>通信子</td>
+</tr>
+</tbody></table>
+<p><em>对于所有非根进程,<code>send_buf_p</code>被忽略。</em> </p>
+<blockquote>
+<p>关于<code>send_count</code>：  </p>
+<blockquote>
+<p>参数<code>send_count</code>表示的是发送到每个进程的数据量，而不是<code>send_buf_p</code>所引用的内存的数据量。  </p>
+</blockquote>
+</blockquote>
+<p>注意：<br>函数<code>MPI_Scatter()</code>将<code>send_count</code>个对象所组成的第一个块发送给了0号进程，下一个块发送给1号进程，以此类推。<br>所以<code>MPI_Scatter()</code>只适用于块划分法，且数据量<code>n</code>必须能被<code>comm_sz</code>整除。<br>为了解决这个问题，需要使用这个函数的升级版：<code>MPI_Scatterv()</code>。  </p>
+<h4 id="MPI-SCATTERV"><a href="#MPI-SCATTERV" class="headerlink" title="MPI_SCATTERV()"></a>MPI_SCATTERV()</h4><p><code>MPI_SCATTERV()</code>对<code>MPI_SCATTER()</code>的功能进行了扩展,它允许向各个进程发送个数不等的数据,因为此时<code>send_count_p</code>是一个数组.同时还通过增加一个新的参数<code>displs</code>提供给用户更大的灵活性,使得可以将根进程的任意一部分数据发往其他进程。<br>原型：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs plain">int MPI_Scatterv(<br>    void*           send_buf_p      &#x2F;* in *&#x2F;, <br>    int*            send_count_p    &#x2F;* in *&#x2F;, <br>    int*            displs          &#x2F;* in *&#x2F;,<br>    MPI_Datatype    send_type       &#x2F;* in *&#x2F;,<br>    void*           recv_buf_p      &#x2F;* out *&#x2F;,<br>    int             recv_count      &#x2F;* in *&#x2F;,<br>    MPI_Datatype    recv_type       &#x2F;* in *&#x2F;,<br>    int             src_proc        &#x2F;* in *&#x2F;,<br>    MPI_Comm        comm            &#x2F;* in *&#x2F;);<br></code></pre></td></tr></table></figure>
+<p>由上至下，分别为：  </p>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>send_buf_p</code></td>
+<td>要发送的数据指针</td>
+</tr>
+<tr>
+<td><code>send_count_p</code></td>
+<td>发送给各个进程的数据量组成的整型一维数组</td>
+</tr>
+<tr>
+<td><code>displs</code></td>
+<td>发送给各进程的数据在原数据的位置组成的整型一维数组</td>
+</tr>
+<tr>
+<td><code>send_type</code></td>
+<td>发送消息缓冲区中元素类型</td>
+</tr>
+<tr>
+<td><code>recv_buf_p</code></td>
+<td>接收消息缓冲区的起始地址</td>
+</tr>
+<tr>
+<td><code>recv_count</code></td>
+<td>接收消息缓冲区中元素的个数</td>
+</tr>
+<tr>
+<td><code>recv_type</code></td>
+<td>接收消息缓冲区中元素的类型</td>
+</tr>
+<tr>
+<td><code>src_proc</code></td>
+<td>要发送消息的进程号</td>
+</tr>
+<tr>
+<td><code>comm</code></td>
+<td>通信子</td>
+</tr>
+</tbody></table>
+<p>同样，对于所有非根进程，<code>send_buf_p</code>被忽略。</p>
+<blockquote>
+<p>关于<code>send_count_p</code>和<code>displs</code>的概念可以用一张图来理清：<br><img src="mpi-learning_scatter_displs.png"></p>
+</blockquote>
+<h4 id="MPI-GATHER"><a href="#MPI-GATHER" class="headerlink" title="MPI_GATHER()"></a>MPI_GATHER()</h4><p>把所有进程的数据都集中到一个进程。<br>原型：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs plain">int MPI_Gather(<br>    void*           send_buf_p      &#x2F;* in *&#x2F;,<br>    int             send_count      &#x2F;* in *&#x2F;,<br>    MPI_Datatype    send_type       &#x2F;* in *&#x2F;,<br>    void*           recv_buf_p      &#x2F;* out *&#x2F;,<br>    int             recv_count      &#x2F;* in *&#x2F;,<br>    MPI_Datatype    recv_type       &#x2F;* in *&#x2F;,<br>    int             dest_proc       &#x2F;* in *&#x2F;,<br>    MPI_Comm        comm            &#x2F;* in *&#x2F;);<br></code></pre></td></tr></table></figure>
+<p>由上至下，分别为：  </p>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>send_buf_p</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>send_count</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>send_type</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>recv_buf_p</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>recv_count</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>recv_type</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>comm</code></td>
+<td></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="组间通信"><a href="#组间通信" class="headerlink" title="组间通信"></a>组间通信</h2><p>TODO  </p>
+<hr>
+<h2 id="进程拓扑"><a href="#进程拓扑" class="headerlink" title="进程拓扑"></a>进程拓扑</h2><p>TODO   </p>
+<p><code>MPI_CART_CREATE()</code>返回一个指向新的通信子的句柄, 这个句柄与笛卡尔拓扑信息相联系。如果<code>reorder = false</code>, 那么在新组中每一进程的标识数就与在旧组中的标识数相一致。否则, 函数会重新对进程编号（也许会选择一个好的将虚拟拓扑嵌入到物理机器的方法）。如果笛卡尔网格的总尺寸小于COMM组的大小, 那么有些进程返回的<code>MPI_COMM_NULL</code>, 类似<code>MPI_COMM_SPLIT()</code>。如果说明的网格大于组的尺寸, 调用出错。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs plain">MPI_CART_CREATE(comm_old, ndims, dims, periods, reorder, comm_cart)<br>    IN comm_old 输入通信子（句柄）<br>    IN ndims 笛卡尔网格的维数（整数）<br>    IN dims 大小为ndims的整数矩阵，说明了每一维的进程数<br>    IN periods 大小为ndims的逻辑矩阵，说明了在每一维上网格是否是周期性的(true)或非周期性的(false)<br>    IN reorder 标识数可以重排序(true)或不能(false)（logical）<br>    OUT comm_cart 带有新的笛卡尔拓扑的通信子（handle）<br></code></pre></td></tr></table></figure><div id="paginator"></div></div><div id="post-footer"><hr><a href="/2017/12/20/ble-profile-intro/">← Prev BLE协议栈简介</a><span style="color: #fe2"> | </span><a href="/2000/01/01/markdown-jp/">Markdown記法 Next →</a><hr></div><div id="bottom-btn"><a id="to-index" href="#post-index" title="index">≡</a><a id="to-top" href="#post-title" title="to top">∧</a></div><div id="Valine"></div><script>new Valine({
+ el: '#Valine'
+ , appId: 'uyrmyOMoruPODMfC9D5LwLLo-gzGzoHsz'
+ , appKey: 'WCEOpH3VI138eAxVITivdGSv'
+ , placeholder: '此条评论委托企鹅物流发送'
+})</script></div></article><aside><div id="about"><a href="/" id="logo"><img src="https://ak.hypergryph.com/assets/index/images/ak/pc/faction/1.png" alt="Logo"></a><h1 id="Dr"><a href="/about"> Dr.Laurenfrost</a></h1><section id="total"><a id="total-archives" href="/archives"><span class="total-title">Archives Total:</span><span class="total-number">13</span></a><div id="total-tags"><span class="total-title">Tags:</span><span class="total-number">11</span></div><div id="total-categories"><span class="total-title">Categories:</span><span class="total-number">8</span></div></section></div><div id="aside-block"><h1>INDEX</h1><div id="post-index"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%87%E7%A8%8B%E8%AF%B4%E6%98%8E"><span class="toc-number">1.</span> <span class="toc-text">过程说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8"><span class="toc-number">2.</span> <span class="toc-text">启动</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%8E%9F%E5%9E%8B%E8%AE%B2%E8%A7%A3"><span class="toc-number">2.1.</span> <span class="toc-text">函数原型讲解</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#MPI-INIT"><span class="toc-number">2.1.1.</span> <span class="toc-text">MPI_INIT()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MPI-FINALIZE"><span class="toc-number">2.1.2.</span> <span class="toc-text">MPI_FINALIZE()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MPI-INITALIZED"><span class="toc-number">2.1.3.</span> <span class="toc-text">MPI_INITALIZED()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MPI-ABORT"><span class="toc-number">2.1.4.</span> <span class="toc-text">MPI_ABORT()</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E4%BF%A1%E5%AD%90%E5%92%8C%E7%BB%84"><span class="toc-number">3.</span> <span class="toc-text">通信子和组</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-number">3.1.</span> <span class="toc-text">基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BB%84%EF%BC%88group%EF%BC%89"><span class="toc-number">3.1.1.</span> <span class="toc-text">组（group）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8A%E4%B8%8B%E6%96%87%EF%BC%88context%EF%BC%89"><span class="toc-number">3.1.2.</span> <span class="toc-text">上下文（context）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%9A%E4%BF%A1%E5%AD%90%EF%BC%88communicator%EF%BC%89"><span class="toc-number">3.1.3.</span> <span class="toc-text">通信子（communicator）</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%BB%98%E8%AE%A4%E9%80%9A%E4%BF%A1%E5%AD%90"><span class="toc-number">3.1.3.1.</span> <span class="toc-text">默认通信子</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E4%BF%A1%E5%9F%9F%E7%9A%84%E4%BA%A7%E7%94%9F"><span class="toc-number">3.2.</span> <span class="toc-text">通信域的产生</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%A8%E5%B7%B2%E6%9C%89%E9%80%9A%E4%BF%A1%E5%9F%9F%E5%9F%BA%E7%A1%80%E4%B8%8A%E5%88%92%E5%88%86%E8%8E%B7%E5%BE%97"><span class="toc-number">3.2.1.</span> <span class="toc-text">在已有通信域基础上划分获得</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%A8%E5%B7%B2%E6%9C%89%E9%80%9A%E4%BF%A1%E5%9F%9F%E5%9F%BA%E7%A1%80%E4%B8%8A%E5%A4%8D%E5%88%B6%E8%8E%B7%E5%BE%97"><span class="toc-number">3.2.2.</span> <span class="toc-text">在已有通信域基础上复制获得</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%A8%E5%B7%B2%E6%9C%89%E8%BF%9B%E7%A8%8B%E7%BB%84%E7%9A%84%E5%9F%BA%E7%A1%80%E4%B8%8A%E5%88%9B%E5%BB%BA%E8%8E%B7%E5%BE%97"><span class="toc-number">3.2.3.</span> <span class="toc-text">在已有进程组的基础上创建获得</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E5%87%BD%E6%95%B0"><span class="toc-number">3.3.</span> <span class="toc-text">常用函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#MPI-COMM-SIZE"><span class="toc-number">3.3.1.</span> <span class="toc-text">MPI_COMM_SIZE()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MPI-COMM-RANK"><span class="toc-number">3.3.2.</span> <span class="toc-text">MPI_COMM_RANK()</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%82%B9%E5%AF%B9%E7%82%B9%E9%80%9A%E4%BF%A1"><span class="toc-number">4.</span> <span class="toc-text">点对点通信</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%98%BB%E5%A1%9E%E9%80%9A%E4%BF%A1"><span class="toc-number">4.1.</span> <span class="toc-text">阻塞通信</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#MPI-SEND"><span class="toc-number">4.1.1.</span> <span class="toc-text">MPI_SEND()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MPI-RECV"><span class="toc-number">4.1.2.</span> <span class="toc-text">MPI_RECV()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MPI-SENDRECV"><span class="toc-number">4.1.3.</span> <span class="toc-text">MPI_SENDRECV()</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%9E%E9%98%BB%E5%A1%9E%E9%80%9A%E4%BF%A1"><span class="toc-number">4.2.</span> <span class="toc-text">非阻塞通信</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9B%86%E5%90%88%E9%80%9A%E4%BF%A1"><span class="toc-number">5.</span> <span class="toc-text">集合通信</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E5%8E%9F%E5%9E%8B%E8%AE%B2%E8%A7%A3-1"><span class="toc-number">5.1.</span> <span class="toc-text">函数原型讲解</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#MPI-REDUCE"><span class="toc-number">5.1.1.</span> <span class="toc-text">MPI_REDUCE()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MPI-ALLREDUCE"><span class="toc-number">5.1.2.</span> <span class="toc-text">MPI_ALLREDUCE()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MPI-BCAST"><span class="toc-number">5.1.3.</span> <span class="toc-text">MPI_BCAST()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MPI-SCATTER"><span class="toc-number">5.1.4.</span> <span class="toc-text">MPI_SCATTER()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MPI-SCATTERV"><span class="toc-number">5.1.5.</span> <span class="toc-text">MPI_SCATTERV()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MPI-GATHER"><span class="toc-number">5.1.6.</span> <span class="toc-text">MPI_GATHER()</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%84%E9%97%B4%E9%80%9A%E4%BF%A1"><span class="toc-number">6.</span> <span class="toc-text">组间通信</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E6%8B%93%E6%89%91"><span class="toc-number">7.</span> <span class="toc-text">进程拓扑</span></a></li></ol></div></div><footer><nobr><span class="text-title">©</span><span class="text-content">2020 to ????</span></nobr><wbr><nobr><span class="text-title">ICP</span><span class="text-content">备案个屁</span></nobr><wbr><nobr><span class="text-title">Auther</span><span class="text-content">Laurenfrost</span></nobr><wbr><wbr><nobr>published with&nbsp;<a target="_blank" rel="noopener" href="http://hexo.io">Hexo&nbsp;</a></nobr><wbr><nobr>Theme&nbsp;<a target="_blank" rel="noopener" href="https://github.com/Yue-plus/hexo-theme-arknights">Arknight&nbsp;</a></nobr><wbr><nobr>by&nbsp;<a target="_blank" rel="noopener" href="https://github.com/Yue-plus">Yue_plus</a></nobr></footer></aside></main><canvas id="canvas-dust"></canvas><script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script><script src="/js/arknights.js"></script></body></html>
