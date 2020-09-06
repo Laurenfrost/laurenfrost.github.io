@@ -1,0 +1,159 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>C++变量回顾 | Frozen Sphere</title><script src="https://cdn.bootcss.com/valine/1.4.4/Valine.min.js"></script><link rel="stylesheet" href="/css/arknights.css"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/highlight.js/10.1.2/styles/atom-one-dark-reasonable.min.css"><meta name="generator" content="Hexo 5.0.2"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head><body><header><nav><a href="/">Home</a><a href="/archives">Archives</a><a href="/friends">Friends</a><a href="/about">About</a></nav></header><main><article><div id="post-bg"><div id="post-title"><div id="post-info"><span>date:<time datetime="2020-07-12T19:50:30.000Z" id="date"> 2020-07-12</time></span><br><span>updated:<time datetime="2020-09-06T08:46:09.852Z" id="updated"> 2020-09-06</time></span></div><h1>C++变量回顾</h1><hr></div><div id="post-content"><blockquote>
+<p>声明：<br>本文基于<em>Kurt Guntheroth</em>所著<em>Optimized C++: Proven Techniques for Heightened Performance</em>的中文译本《C++性能优化指南》，人民邮电出版社，2018，杨文轩译。  </p>
+</blockquote>
+<p>自从接触高性能计算问题，便深感计算机系统之繁杂。从底层的cpu架构、向量指令集、cache实现，到操作系统的进程/线程切换、编译器对代码的处理等等都无时无刻影响着程序执行的效率。且不论硬件和系统之类乱七八糟的东西，就拿开发者写出来的程序来说，一切高级语言的程序实现在经过编译器的转化后，程序在计算机底层的动作往往与开发者的想法有所出入。按理说现代计算机系统的设计指导思想之一就是抽象+封装。这种思想使得开发者无需考虑底层的工作机制，专心于自己眼前的事物，从而大大提升了开发者的工作效率。但不得不说这种层层抽象、层层封装的俄罗斯套娃是以牺牲计算性能为代价的。由于上层开发者不明白（一般也不需要明白）底层的内部实现方法，所以底层开发者必须保证他写的代码的可靠性，不得不让编译器生成的机器指令多做一些“无用功”。好在得益于几十年来硬件技术的改善，开发者所能使用的算力远非同日可语。在一般情形下，与这些俄罗斯套娃带来的便利相比，造成的计算性能的浪费无伤大雅。然而一旦对计算资源有所约束，又或者需要面对巨量的性能开销，就不得不考虑对程序的优化了。<br>既然如前文所述，计算性能的浪费来自于上层开发者无视底层实现的自说自话，那么想要优化程序，自然就得从了解底层实现开始。这本《C++性能优化指南》就介绍了很多C++的标准和一些可能的编译器实现思路，相当值得参考。这里结合本人的经验，记录本书第六章关于C++变量的相关说法，方便以后查阅。  </p>
+<h2 id="C-变量回顾"><a href="#C-变量回顾" class="headerlink" title="C++变量回顾"></a>C++变量回顾</h2><p>C++每个变量（普通数据类型、数组、结构体、实例）在内存中的存储布局都是固定的，它们的大小在编译之时就已经确定了。<br>C++允许程序获得变量的大小和指向该变量的指针，但不允许指定变量的每一位的布局。<br>C++标准允许改变<code>struct</code>成员变量内部的顺序和布局，也提供了多个变量可以共享同一内存块的<code>union</code>，但程序所看到的联合是依赖于实现的。  </p>
+<h3 id="变量的存储期（生存周期）"><a href="#变量的存储期（生存周期）" class="headerlink" title="变量的存储期（生存周期）"></a>变量的存储期（生存周期）</h3><p>每个变量都有它自己的存储期，也叫生存周期。只有在这段时间内，变量所占用的存储空间和里面存储的值才是有意义的。C++不能直接指定变量的生存周期，只能从变量声明中推断。<br>C++ 11中的生存周期有这几种：静态、线程局部、自动，以及动态生存周期。  </p>
+<ol>
+<li><p>静态生存周期<br> 编译器会为每一个静态变量分配一个固定位置和固定大小的内存空间，该空间在其生存周期内会被一直保留。  </p>
+<ul>
+<li><p>全局静态变量在进入<code>main()</code>之前构建，退出<code>main()</code>后销毁。  </p>
+</li>
+<li><p>函数内静态变量则在“程序执行第一次进入函数前”被构建。  </p>
+</li>
+<li><p>也就是说函数内静态变量可能和全局变量同时被构建，也可能直到第一次调用前才构建，这取决于编译器的具体实现。*  </p>
+<p>为静态变量创建存储空间没有运行时开销。<br>命名空间作用域内定义的变量，还有被声明为<code>static</code>或者<code>extern</code>的变量具有静态生存周期。</p>
+</li>
+</ul>
+</li>
+</ol>
+<ol start="2">
+<li><p>线程局部生存周期<br> 从C++11开始，程序可以声明具有线程局部生存周期的变量。<br> <strong><em>跟C++11开始引入的std::thread类有关吗？这种变量我还没接触过，有待验证。</em></strong>  </p>
+<p> 线程局部变量在进入线程时被构建，退出线程时被销毁。其生命周期与线程的生命周期相同，每一个线程都包含一份这类变量的独立副本。<br> 一般来说访问线程局部变量的开销高于静态变量，具体取决于操作系统和编译器。  </p>
+<p> 在某些系统中，线程局部变量的存储空间是由线程分配的，所以访问线程局部变量比访问全局变量多一次指令。**<em>大概是需要计算主进程内存空间到相应线程的内存空间的offset，我是这么理解的**</em><br> 在其他系统中，需要通过线程ID索引一张全局表来访问线程局部变量。尽管这个操作开销是O(1)，但会发生一次函数调用和一些计算，导致线程局部变量的开销变得更大。  </p>
+<p> 自C++11开始，用<code>thread_local</code>类型声明的变量具有线程局部生存周期。  </p>
+</li>
+<li><p>自动生存周期<br> 自动生存周期的变量会被分配到预留的函数调用栈中。在编译时就会计算出其距离栈指针的offset，然后以该offset为基准占用一段固定大小的内存空间，但自动变量的绝对地址指导程序进入变量的作用域之后才能确定。  </p>
+<p> 自动变量在运行到它的声明位置时被构建，当程序离开大括号括起来的代码块时，自动变量被摧毁。  </p>
+<p> 为自动变量分配内存空间没有运行时开销。但自动变量可以占用的总存储空间有限，深度函数调用/递归太多层会溢出（segment fault警告）。因此适用于<strong>只在代码块附近被使用的对象</strong>。<br> 可以通过名字访问自动变量，但只在构建后到摧毁前可见；变量摧毁后，指向该变量的指针和引用依然存在，但解引它会导致未定义的程序行为（segment fault警告）。  </p>
+<p> 自动生存周期没有专门的关键字。函数的形参变量具有自动生存周期；除非使用了特殊关键字，声明在可执行代码块内部的变量也具有自动存储期。  </p>
+</li>
+<li><p>动态生存周期<br> 动态生存周期的变量保存在程序向系统请求的内存中，其地址在运行时确定。<br> 当需要内存空间时，程序会显式地调用内存管理器来请求内存空间并构建动态变量；当不需要该变量时，程序应显式地调用内存管理器来摧毁动态变量，并将所占空间返还给内存管理器。（也就是new和delete）  </p>
+<blockquote>
+<p>值得一提的是数组的声明。C++允许运行时通过一个（非常量）表达式来指定动态数组变量的最高维度。这是唯一一种编译时变量占用内存大小不固定的情况。  </p>
+</blockquote>
+</li>
+</ol>
+<h3 id="变量的所有权"><a href="#变量的所有权" class="headerlink" title="变量的所有权"></a>变量的所有权</h3><h3 id="值对象与实体对象"><a href="#值对象与实体对象" class="headerlink" title="值对象与实体对象"></a>值对象与实体对象</h3><h2 id="C-动态变量API回顾"><a href="#C-动态变量API回顾" class="headerlink" title="C++动态变量API回顾"></a>C++动态变量API回顾</h2><h3 id="使用智能指针实现动态变量所有权的自动化"><a href="#使用智能指针实现动态变量所有权的自动化" class="headerlink" title="使用智能指针实现动态变量所有权的自动化"></a>使用智能指针实现动态变量所有权的自动化</h3><h3 id="动态变量的运行时开销"><a href="#动态变量的运行时开销" class="headerlink" title="动态变量的运行时开销"></a>动态变量的运行时开销</h3><div id="paginator"></div></div><div id="post-footer"><hr><a href="/2020/07/20/clear-cpu-cache/">← Prev 思考：如何清掉CPU的cache</a><span style="color: #fe2"> | </span><a href="/2020/05/04/ocl-context/">浅谈OpenCL的上下文（Context） Next →</a><hr></div><div id="bottom-btn"><a id="to-index" href="#post-index" title="index">≡</a><a id="to-top" href="#post-title" title="to top">∧</a></div><div id="Valine"></div><script>new Valine({
+ el: '#Valine'
+ , appId: 'uyrmyOMoruPODMfC9D5LwLLo-gzGzoHsz'
+ , appKey: 'WCEOpH3VI138eAxVITivdGSv'
+ , placeholder: '此条评论委托企鹅物流发送'
+})</script></div></article><aside><div id="about"><a href="/" id="logo"><img src="https://ak.hypergryph.com/assets/index/images/ak/pc/faction/1.png" alt="Logo"></a><h1 id="Dr"><a href="/about"> Dr.Laurenfrost</a></h1><section id="total"><a id="total-archives" href="/archives"><span class="total-title">Archives Total:</span><span class="total-number">13</span></a><div id="total-tags"><span class="total-title">Tags:</span><span class="total-number">11</span></div><div id="total-categories"><span class="total-title">Categories:</span><span class="total-number">8</span></div></section></div><div id="aside-block"><h1>INDEX</h1><div id="post-index"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#C-%E5%8F%98%E9%87%8F%E5%9B%9E%E9%A1%BE"><span class="toc-number">1.</span> <span class="toc-text">C++变量回顾</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%98%E9%87%8F%E7%9A%84%E5%AD%98%E5%82%A8%E6%9C%9F%EF%BC%88%E7%94%9F%E5%AD%98%E5%91%A8%E6%9C%9F%EF%BC%89"><span class="toc-number">1.1.</span> <span class="toc-text">变量的存储期（生存周期）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%98%E9%87%8F%E7%9A%84%E6%89%80%E6%9C%89%E6%9D%83"><span class="toc-number">1.2.</span> <span class="toc-text">变量的所有权</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%80%BC%E5%AF%B9%E8%B1%A1%E4%B8%8E%E5%AE%9E%E4%BD%93%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.3.</span> <span class="toc-text">值对象与实体对象</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#C-%E5%8A%A8%E6%80%81%E5%8F%98%E9%87%8FAPI%E5%9B%9E%E9%A1%BE"><span class="toc-number">2.</span> <span class="toc-text">C++动态变量API回顾</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88%E5%AE%9E%E7%8E%B0%E5%8A%A8%E6%80%81%E5%8F%98%E9%87%8F%E6%89%80%E6%9C%89%E6%9D%83%E7%9A%84%E8%87%AA%E5%8A%A8%E5%8C%96"><span class="toc-number">2.1.</span> <span class="toc-text">使用智能指针实现动态变量所有权的自动化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E5%8F%98%E9%87%8F%E7%9A%84%E8%BF%90%E8%A1%8C%E6%97%B6%E5%BC%80%E9%94%80"><span class="toc-number">2.2.</span> <span class="toc-text">动态变量的运行时开销</span></a></li></ol></li></ol></div></div><footer><nobr><span class="text-title">©</span><span class="text-content">2020 to ????</span></nobr><wbr><nobr><span class="text-title">ICP</span><span class="text-content">备案个屁</span></nobr><wbr><nobr><span class="text-title">Auther</span><span class="text-content">Laurenfrost</span></nobr><wbr><wbr><nobr>published with&nbsp;<a target="_blank" rel="noopener" href="http://hexo.io">Hexo&nbsp;</a></nobr><wbr><nobr>Theme&nbsp;<a target="_blank" rel="noopener" href="https://github.com/Yue-plus/hexo-theme-arknights">Arknight&nbsp;</a></nobr><wbr><nobr>by&nbsp;<a target="_blank" rel="noopener" href="https://github.com/Yue-plus">Yue_plus</a></nobr></footer></aside></main><canvas id="canvas-dust"></canvas><script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script><script src="/js/arknights.js"></script></body></html>

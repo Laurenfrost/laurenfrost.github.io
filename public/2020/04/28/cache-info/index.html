@@ -1,0 +1,149 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>如何在Linux系统中查询cache信息 | Frozen Sphere</title><script src="https://cdn.bootcss.com/valine/1.4.4/Valine.min.js"></script><link rel="stylesheet" href="/css/arknights.css"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/highlight.js/10.1.2/styles/atom-one-dark-reasonable.min.css"><meta name="generator" content="Hexo 5.0.2"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head><body><header><nav><a href="/">Home</a><a href="/archives">Archives</a><a href="/friends">Friends</a><a href="/about">About</a></nav></header><main><article><div id="post-bg"><div id="post-title"><div id="post-info"><span>date:<time datetime="2020-04-28T13:43:23.000Z" id="date"> 2020-04-28</time></span><br><span>updated:<time datetime="2020-09-06T08:46:09.852Z" id="updated"> 2020-09-06</time></span></div><h1>如何在Linux系统中查询cache信息</h1><hr></div><div id="post-content"><div align = "center">
+<img src = "MemoryHierarchy.png" width = 50% height = 50% alt = "内存层次模型">
+<p>内存分层模型</p>
+<p><i>Computer Architecture A Quantitative Approach (6th Edition)</i></p>
+</div>
+
+<h2 id="使用getconf命令来查询cache信息"><a href="#使用getconf命令来查询cache信息" class="headerlink" title="使用getconf命令来查询cache信息"></a>使用<code>getconf</code>命令来查询cache信息</h2><p><code>getconf</code>命令可以查询计算机硬件的很多信息，这其中就包括了cache，因此我们可以使用如下的命令来获取cache相关信息：  </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ getconf -a | grep CACHE<br></code></pre></td></tr></table></figure>
+<p>在我的电脑里获取到了如下信息：<br><em>CPU: AMD Ryzen 7 2700</em>   </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs plain">LEVEL1_ICACHE_SIZE                 65536<br>LEVEL1_ICACHE_ASSOC                4<br>LEVEL1_ICACHE_LINESIZE             64<br>LEVEL1_DCACHE_SIZE                 32768<br>LEVEL1_DCACHE_ASSOC                8<br>LEVEL1_DCACHE_LINESIZE             64<br>LEVEL2_CACHE_SIZE                  524288<br>LEVEL2_CACHE_ASSOC                 8<br>LEVEL2_CACHE_LINESIZE              64<br>LEVEL3_CACHE_SIZE                  16777216<br>LEVEL3_CACHE_ASSOC                 16<br>LEVEL3_CACHE_LINESIZE              64<br>LEVEL4_CACHE_SIZE                  0<br>LEVEL4_CACHE_ASSOC                 0<br>LEVEL4_CACHE_LINESIZE              0<br></code></pre></td></tr></table></figure>
+<ol>
+<li>这些数据的单位均为字节（Byte）。  </li>
+<li>一级缓存分“指令缓存”和“数据缓存”两种，分别用<code>ICACHE</code>和<code>DCACHE</code>来表示。  </li>
+<li><code>SIZE</code>指的是该级缓存的总大小。</li>
+<li><code>LINESIZE</code>指的是该级缓存cache行的大小。即在内存层次模型（Memory Hierarchy）中，该级cache向低一级cache访问时，一次性抓取的数据量。</li>
+<li><code>ASSOC</code>指的是该级缓存组相联的组数。</li>
+</ol>
+<hr>
+<h2 id="通过系统自带的库来获取cache信息"><a href="#通过系统自带的库来获取cache信息" class="headerlink" title="通过系统自带的库来获取cache信息"></a>通过系统自带的库来获取cache信息</h2><p>头文件<code>unistd.h</code>封装了大量针对系统调用的API，可以藉此获取相应的信息：  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;unistd.h&gt;</span></span><br> <br><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span> <span class="hljs-params">(<span class="hljs-keyword">void</span>)</span></span><br><span class="hljs-function"></span>&#123;<br>  <span class="hljs-keyword">long</span> l1_cache_line_size = sysconf(_SC_LEVEL1_DCACHE_LINESIZE);<br>  <span class="hljs-keyword">long</span> l2_cache_line_size = sysconf(_SC_LEVEL2_CACHE_LINESIZE); <br>  <span class="hljs-keyword">long</span> l3_cache_line_size = sysconf(_SC_LEVEL3_CACHE_LINESIZE);<br> <br>  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;L1 Cache Line Size is %ld bytes.\n&quot;</span>, l1_cache_line_size); <br>  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;L2 Cache Line Size is %ld bytes.\n&quot;</span>, l2_cache_line_size); <br>  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;L3 Cache Line Size is %ld bytes.\n&quot;</span>, l3_cache_line_size); <br> <br>  <span class="hljs-keyword">return</span> (<span class="hljs-number">0</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><code>gcc</code>编译后运行可得如下信息：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs plain">$ vim cache-info.c<br>$ gcc cache-info.c<br>$ .&#x2F;a.out<br>L1 Cache Line Size is 64 bytes.<br>L2 Cache Line Size is 64 bytes.<br>L3 Cache Line Size is 64 bytes.<br></code></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="通过不同系统相应的文件来获取cache信息"><a href="#通过不同系统相应的文件来获取cache信息" class="headerlink" title="通过不同系统相应的文件来获取cache信息"></a>通过不同系统相应的文件来获取cache信息</h2><p>参考[<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/794632/programmatically-get-the-cache-line-size]">https://stackoverflow.com/questions/794632/programmatically-get-the-cache-line-size]</a>  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-meta-keyword">ifndef</span> GET_CACHE_LINE_SIZE_H_INCLUDED</span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> GET_CACHE_LINE_SIZE_H_INCLUDED</span><br><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stddef.h&gt;</span></span><br><span class="hljs-function"><span class="hljs-keyword">size_t</span> <span class="hljs-title">cache_line_size</span><span class="hljs-params">()</span></span>;<br><br><span class="hljs-meta">#<span class="hljs-meta-keyword">if</span> defined(__APPLE__)</span><br><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;sys/sysctl.h&gt;</span></span><br><span class="hljs-function"><span class="hljs-keyword">size_t</span> <span class="hljs-title">cache_line_size</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-keyword">size_t</span> line_size = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">size_t</span> sizeof_line_size = <span class="hljs-keyword">sizeof</span>(line_size);<br>    sysctlbyname(<span class="hljs-string">&quot;hw.cachelinesize&quot;</span>, &amp;line_size, &amp;sizeof_line_size, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>);<br>    <span class="hljs-keyword">return</span> line_size;<br>&#125;<br><br><span class="hljs-meta">#<span class="hljs-meta-keyword">elif</span> defined(_WIN32)</span><br><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;windows.h&gt;</span></span><br><span class="hljs-function"><span class="hljs-keyword">size_t</span> <span class="hljs-title">cache_line_size</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-keyword">size_t</span> line_size = <span class="hljs-number">0</span>;<br>    DWORD buffer_size = <span class="hljs-number">0</span>;<br>    DWORD i = <span class="hljs-number">0</span>;<br>    SYSTEM_LOGICAL_PROCESSOR_INFORMATION * buffer = <span class="hljs-number">0</span>;<br><br>    GetLogicalProcessorInformation(<span class="hljs-number">0</span>, &amp;buffer_size);<br>    buffer = (SYSTEM_LOGICAL_PROCESSOR_INFORMATION *)<span class="hljs-built_in">malloc</span>(buffer_size);<br>    GetLogicalProcessorInformation(&amp;buffer[<span class="hljs-number">0</span>], &amp;buffer_size);<br><br>    <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i != buffer_size / <span class="hljs-keyword">sizeof</span>(SYSTEM_LOGICAL_PROCESSOR_INFORMATION); ++i) &#123;<br>        <span class="hljs-keyword">if</span> (buffer[i].Relationship == RelationCache &amp;&amp; buffer[i].Cache.Level == <span class="hljs-number">1</span>) &#123;<br>            line_size = buffer[i].Cache.LineSize;<br>            <span class="hljs-keyword">break</span>;<br>        &#125;<br>    &#125;<br><br>    <span class="hljs-built_in">free</span>(buffer);<br>    <span class="hljs-keyword">return</span> line_size;<br>&#125;<br><br><span class="hljs-meta">#<span class="hljs-meta-keyword">elif</span> defined(linux)</span><br><br><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-function"><span class="hljs-keyword">size_t</span> <span class="hljs-title">cache_line_size</span><span class="hljs-params">()</span> </span>&#123;<br>    FILE * p = <span class="hljs-number">0</span>;<br>    p = fopen(<span class="hljs-string">&quot;/sys/devices/system/cpu/cpu0/cache/index0/coherency_line_size&quot;</span>, <span class="hljs-string">&quot;r&quot;</span>);<br>    <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">if</span> (p) &#123;<br>        <span class="hljs-built_in">fscanf</span>(p, <span class="hljs-string">&quot;%d&quot;</span>, &amp;i);<br>        fclose(p);<br>    &#125;<br>    <span class="hljs-keyword">return</span> i;<br>&#125;<br><br><span class="hljs-meta">#<span class="hljs-meta-keyword">else</span></span><br>    <span class="hljs-meta">#<span class="hljs-meta-keyword">error</span> Unrecognized platform</span><br>    <span class="hljs-meta">#<span class="hljs-meta-keyword">endif</span></span><br><span class="hljs-meta">#<span class="hljs-meta-keyword">endif</span></span><br></code></pre></td></tr></table></figure>
+<div id="paginator"></div></div><div id="post-footer"><hr><a href="/2020/05/04/ocl-context/">← Prev 浅谈OpenCL的上下文（Context）</a><span style="color: #fe2"> | </span><a href="/2020/04/23/rocblas-trtri/">rocBLAS矩阵求逆函数trtri()源码分析 Next →</a><hr></div><div id="bottom-btn"><a id="to-index" href="#post-index" title="index">≡</a><a id="to-top" href="#post-title" title="to top">∧</a></div><div id="Valine"></div><script>new Valine({
+ el: '#Valine'
+ , appId: 'uyrmyOMoruPODMfC9D5LwLLo-gzGzoHsz'
+ , appKey: 'WCEOpH3VI138eAxVITivdGSv'
+ , placeholder: '此条评论委托企鹅物流发送'
+})</script></div></article><aside><div id="about"><a href="/" id="logo"><img src="https://ak.hypergryph.com/assets/index/images/ak/pc/faction/1.png" alt="Logo"></a><h1 id="Dr"><a href="/about"> Dr.Laurenfrost</a></h1><section id="total"><a id="total-archives" href="/archives"><span class="total-title">Archives Total:</span><span class="total-number">13</span></a><div id="total-tags"><span class="total-title">Tags:</span><span class="total-number">11</span></div><div id="total-categories"><span class="total-title">Categories:</span><span class="total-number">8</span></div></section></div><div id="aside-block"><h1>INDEX</h1><div id="post-index"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8getconf%E5%91%BD%E4%BB%A4%E6%9D%A5%E6%9F%A5%E8%AF%A2cache%E4%BF%A1%E6%81%AF"><span class="toc-number">1.</span> <span class="toc-text">使用getconf命令来查询cache信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E7%B3%BB%E7%BB%9F%E8%87%AA%E5%B8%A6%E7%9A%84%E5%BA%93%E6%9D%A5%E8%8E%B7%E5%8F%96cache%E4%BF%A1%E6%81%AF"><span class="toc-number">2.</span> <span class="toc-text">通过系统自带的库来获取cache信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E4%B8%8D%E5%90%8C%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%BA%94%E7%9A%84%E6%96%87%E4%BB%B6%E6%9D%A5%E8%8E%B7%E5%8F%96cache%E4%BF%A1%E6%81%AF"><span class="toc-number">3.</span> <span class="toc-text">通过不同系统相应的文件来获取cache信息</span></a></li></ol></div></div><footer><nobr><span class="text-title">©</span><span class="text-content">2020 to ????</span></nobr><wbr><nobr><span class="text-title">ICP</span><span class="text-content">备案个屁</span></nobr><wbr><nobr><span class="text-title">Auther</span><span class="text-content">Laurenfrost</span></nobr><wbr><wbr><nobr>published with&nbsp;<a target="_blank" rel="noopener" href="http://hexo.io">Hexo&nbsp;</a></nobr><wbr><nobr>Theme&nbsp;<a target="_blank" rel="noopener" href="https://github.com/Yue-plus/hexo-theme-arknights">Arknight&nbsp;</a></nobr><wbr><nobr>by&nbsp;<a target="_blank" rel="noopener" href="https://github.com/Yue-plus">Yue_plus</a></nobr></footer></aside></main><canvas id="canvas-dust"></canvas><script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script><script src="/js/arknights.js"></script></body></html>

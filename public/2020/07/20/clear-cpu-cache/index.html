@@ -1,0 +1,169 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>思考：如何清掉CPU的cache | Frozen Sphere</title><script src="https://cdn.bootcss.com/valine/1.4.4/Valine.min.js"></script><link rel="stylesheet" href="/css/arknights.css"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/highlight.js/10.1.2/styles/atom-one-dark-reasonable.min.css"><meta name="generator" content="Hexo 5.0.2"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head><body><header><nav><a href="/">Home</a><a href="/archives">Archives</a><a href="/friends">Friends</a><a href="/about">About</a></nav></header><main><article><div id="post-bg"><div id="post-title"><div id="post-info"><span>date:<time datetime="2020-07-20T20:35:14.000Z" id="date"> 2020-07-20</time></span><br><span>updated:<time datetime="2020-09-06T08:46:09.852Z" id="updated"> 2020-09-06</time></span></div><h1>思考：如何清掉CPU的cache</h1><hr></div><div id="post-content"><p>bangumi的三一大佬最近在研究计算机系统结构，他今天突然在群里提出了一个问题：linux有命令能刷新CPU cache吗？<br>课本里都讲了，CPU的cache是对用户应该是透明的。换句话说，CPU的cache从来是自己独立运行，没有办法直接控制的。所以不存在一种命令直接刷新cache。<br>但真的一点办法都没有吗？  </p>
+<h2 id="思路一：大量访存"><a href="#思路一：大量访存" class="headerlink" title="思路一：大量访存"></a>思路一：大量访存</h2><p>cache嘛，众所周知，帮助CPU访存的东西。CPU需要什么，cache就帮你从内存里抓过来。无论cache是用哪一种算法实现的，它总会有一个更新cache内容的机制，把用过了的数据丢回内存，从而腾出空间存放新的数据。既然如此，那么我们就故意申请一个大于cache大小的空间，然后把它们挨个访问一遍。这样不就能实现“刷新”cache了吗。  </p>
+<p>通过CPU（而非DMA）反复读取大量数据：[2]  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-keyword">const</span> <span class="hljs-keyword">int</span> <span class="hljs-built_in">size</span> = <span class="hljs-number">20</span>*<span class="hljs-number">1024</span>*<span class="hljs-number">1024</span>; <span class="hljs-comment">// Allocate 20M. Set much larger than L2</span><br>    <span class="hljs-keyword">char</span> *c = (<span class="hljs-keyword">char</span> *)<span class="hljs-built_in">malloc</span>(<span class="hljs-built_in">size</span>);<br>    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">0xffff</span>; i++)<br>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> j = <span class="hljs-number">0</span>; j &lt; <span class="hljs-built_in">size</span>; j++)<br>            c[j] = i*j;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>但这又存在新的问题：  </p>
+<ol>
+<li>绝大多数的现代CPU有两个L1 cache：data cache和instruction cache。这种大量访存的方式只能清除L1的data cache，无法清除L1的instruction cache。  </li>
+<li>因为不知道CPU内部的具体实现方式，所以无法保证CPU会把cache里的所有旧数据全部替换掉。如果上述程序所访问的数据只在cache的一个section里打转，那么就根本算不上“清除”了cache。  </li>
+<li>最致命的一点就是：这种方式与随便找一堆代码执行一下又有什么分别呢？  </li>
+</ol>
+<p><em>我还有一些别的想法：现在多核CPU基本上L1和L2是每个核独占，而L3则是同一个numa结点内的所有核共享，所以这种方式是绝对无法做到“清除”L3缓存的。</em></p>
+<h2 id="思路二：干等着"><a href="#思路二：干等着" class="headerlink" title="思路二：干等着"></a>思路二：干等着</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-meta">#!/usr/bin/ruby</span><br>puts <span class="hljs-string">&quot;main:&quot;</span><br>200000.times &#123; puts <span class="hljs-string">&quot;  nop&quot;</span> &#125;<br>puts <span class="hljs-string">&quot;  xor rax, rax&quot;</span><br>puts <span class="hljs-string">&quot;  ret&quot;</span><br></code></pre></td></tr></table></figure>
+<p>Running a few times under different names (code produced not the script) should do the work  [2]</p>
+<h2 id="思路三：特殊的CPU指令"><a href="#思路三：特殊的CPU指令" class="headerlink" title="思路三：特殊的CPU指令"></a>思路三：特殊的CPU指令</h2><p>经过查阅资料，发现了一个有趣的事情，现代CPU提供了一种能直接作用于cache line的指令：<code>CLFLUSH</code>（即flush cache line）。<br>**<em>所以严格来说，能直接接触CPU cache的方法是存在的**</em>  </p>
+<blockquote>
+<p>There are x86 assembly instructions to force the CPU to flush certain cache lines (such as CLFLUSH), but they are pretty obscure. CLFLUSH in particular only flushes a chosen address from L1 caches.  </p>
+</blockquote>
+<blockquote>
+<p>The CLFLUSH instruction does not flush only the L1 cache. From the Intel x86-64 reference manual: “The CLFLUSH (flush cache line) instruction writes and invalidates the cache line associated with a specified linear address. The invalidation is for all levels of the processor’s cache hierarchy, and it is broadcast throughout the cache coherency domain.”  [1]</p>
+</blockquote>
+<p>另外似乎还存在指令<code>wbinvd</code>和<code>invd</code>，使指定cache line的数据变成invalid。</p>
+<blockquote>
+<p>Fortunately, there is more than one way to explicitly flush the caches.</p>
+</blockquote>
+<blockquote>
+<p>The instruction “wbinvd” writes back modified cache content and marks the caches empty. It executes a bus cycle to make external caches flush their data. Unfortunately, it is a privileged instruction. But if it is possible to run the test program under something like DOS, this is the way to go. This has the advantage of keeping the cache footprint of the “OS” very small.</p>
+</blockquote>
+<blockquote>
+<p>Additionally, there is the “invd” instruction, which invalidates caches without flushing them back to main memory. This violates the coherency of main memory and cache, so you have to take care of that by yourself. Not really recommended.</p>
+</blockquote>
+<blockquote>
+<p>For benchmarking purposes, the simplest solution is probably copying a large memory block to a region marked with WC (write combining) instead of WB. The memory mapped region of the graphics card is a good candidate, or you can mark a region as WC by yourself via the MTRR registers.</p>
+</blockquote>
+<blockquote>
+<p>You can find some resources about benchmarking short routines at <a target="_blank" rel="noopener" href="https://www.agner.org/optimize/">Test programs for measuring clock cycles and performance monitoring</a>.[1]</p>
+</blockquote>
+<p>关于这些指令的讨论可以参考[4]。<br>更完整的论述可以参考[3]。</p>
+<h2 id="参考内容"><a href="#参考内容" class="headerlink" title="参考内容"></a>参考内容</h2><p>stack overflow:  </p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/1756825/how-can-i-do-a-cpu-cache-flush-in-x86-windows">How can I do a CPU cache flush in x86 Windows?</a>  </li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/3446138/how-to-clear-cpu-l1-and-l2-cache">How to clear CPU L1 and L2 cache [duplicate]
+</a>  </li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/48527189/is-there-a-way-to-flush-the-entire-cpu-cache-related-to-a-program">Is there a way to flush the entire CPU cache related to a program?</a>  </li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/6745665/wbinvd-instruction-usage/6745706#6745706">WBINVD instruction usage</a>  </li>
+</ol>
+<div id="paginator"></div></div><div id="post-footer"><hr><a href="/2020/07/30/git-pull-error/">← Prev git pull报错以及git stash</a><span style="color: #fe2"> | </span><a href="/2020/07/12/cpp-variable/">C++变量回顾 Next →</a><hr></div><div id="bottom-btn"><a id="to-index" href="#post-index" title="index">≡</a><a id="to-top" href="#post-title" title="to top">∧</a></div><div id="Valine"></div><script>new Valine({
+ el: '#Valine'
+ , appId: 'uyrmyOMoruPODMfC9D5LwLLo-gzGzoHsz'
+ , appKey: 'WCEOpH3VI138eAxVITivdGSv'
+ , placeholder: '此条评论委托企鹅物流发送'
+})</script></div></article><aside><div id="about"><a href="/" id="logo"><img src="https://ak.hypergryph.com/assets/index/images/ak/pc/faction/1.png" alt="Logo"></a><h1 id="Dr"><a href="/about"> Dr.Laurenfrost</a></h1><section id="total"><a id="total-archives" href="/archives"><span class="total-title">Archives Total:</span><span class="total-number">13</span></a><div id="total-tags"><span class="total-title">Tags:</span><span class="total-number">11</span></div><div id="total-categories"><span class="total-title">Categories:</span><span class="total-number">8</span></div></section></div><div id="aside-block"><h1>INDEX</h1><div id="post-index"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%E4%B8%80%EF%BC%9A%E5%A4%A7%E9%87%8F%E8%AE%BF%E5%AD%98"><span class="toc-number">1.</span> <span class="toc-text">思路一：大量访存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%E4%BA%8C%EF%BC%9A%E5%B9%B2%E7%AD%89%E7%9D%80"><span class="toc-number">2.</span> <span class="toc-text">思路二：干等着</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%B7%AF%E4%B8%89%EF%BC%9A%E7%89%B9%E6%AE%8A%E7%9A%84CPU%E6%8C%87%E4%BB%A4"><span class="toc-number">3.</span> <span class="toc-text">思路三：特殊的CPU指令</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E5%86%85%E5%AE%B9"><span class="toc-number">4.</span> <span class="toc-text">参考内容</span></a></li></ol></div></div><footer><nobr><span class="text-title">©</span><span class="text-content">2020 to ????</span></nobr><wbr><nobr><span class="text-title">ICP</span><span class="text-content">备案个屁</span></nobr><wbr><nobr><span class="text-title">Auther</span><span class="text-content">Laurenfrost</span></nobr><wbr><wbr><nobr>published with&nbsp;<a target="_blank" rel="noopener" href="http://hexo.io">Hexo&nbsp;</a></nobr><wbr><nobr>Theme&nbsp;<a target="_blank" rel="noopener" href="https://github.com/Yue-plus/hexo-theme-arknights">Arknight&nbsp;</a></nobr><wbr><nobr>by&nbsp;<a target="_blank" rel="noopener" href="https://github.com/Yue-plus">Yue_plus</a></nobr></footer></aside></main><canvas id="canvas-dust"></canvas><script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script><script src="/js/arknights.js"></script></body></html>

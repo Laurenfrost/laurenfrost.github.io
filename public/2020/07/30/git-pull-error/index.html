@@ -1,0 +1,175 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>git pull报错以及git stash | Frozen Sphere</title><script src="https://cdn.bootcss.com/valine/1.4.4/Valine.min.js"></script><link rel="stylesheet" href="/css/arknights.css"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/highlight.js/10.1.2/styles/atom-one-dark-reasonable.min.css"><meta name="generator" content="Hexo 5.0.2"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head><body><header><nav><a href="/">Home</a><a href="/archives">Archives</a><a href="/friends">Friends</a><a href="/about">About</a></nav></header><main><article><div id="post-bg"><div id="post-title"><div id="post-info"><span>date:<time datetime="2020-07-30T16:50:08.000Z" id="date"> 2020-07-30</time></span><br><span>updated:<time datetime="2020-09-06T08:46:09.852Z" id="updated"> 2020-09-06</time></span></div><h1>git pull报错以及git stash</h1><hr></div><div id="post-content"><p>为了方便我<s>写博客</s>做知识管理，我的台式机（主力机）和Windows平板上都有一份laurenfrost.github.io的repo。但我更多的时间是坐在台式机前，所以大部分的更新都是从我台式机上的repo来push到GitHub的。至于我的平板，则只有偶尔出门的时候会用，因此平板上的repo的进度就落后很多。而且经常有只在平板上写了几个字就放在那里了，最后是在台式机上重新hexo new了一个post，然后deploy的。</p>
+<h2 id="unrelated-histories"><a href="#unrelated-histories" class="headerlink" title="unrelated histories"></a><code>unrelated histories</code></h2><p>今天我为了乘凉跑到咖啡店里，打算接着写之前的内容的的，就打算直接把GitHub里的更新给pull到平板里的repo。结果就遇到了下面的报错：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs plain">ascdut@FrozenSatellite:~&#x2F;laurenfrost.github.io$ git pull http:&#x2F;&#x2F;github.com&#x2F;laurenfrost&#x2F;laurenfrost.github.io.git<br>warning: redirecting to https:&#x2F;&#x2F;github.com&#x2F;laurenfrost&#x2F;laurenfrost.github.io.git&#x2F;<br>remote: Enumerating objects: 539, done.<br>remote: Counting objects: 100% (539&#x2F;539), done.<br>remote: Compressing objects: 100% (129&#x2F;129), done.<br>remote: Total 462 (delta 183), reused 446 (delta 167), pack-reused 0<br>Receiving objects: 100% (462&#x2F;462), 28.39 MiB | 3.51 MiB&#x2F;s, done.<br>Resolving deltas: 100% (183&#x2F;183), completed with 33 local objects.<br>From http:&#x2F;&#x2F;github.com&#x2F;laurenfrost&#x2F;laurenfrost.github.io<br> * branch            HEAD       -&gt; FETCH_HEAD<br>fatal: refusing to merge unrelated histories<br></code></pre></td></tr></table></figure>
+
+<p>unrelated？我他妈直接问号。怎么就让它unrelated了呢？果断Google。然后我在<a target="_blank" rel="noopener" href="https://www.educative.io/edpresso/the-fatal-refusing-to-merge-unrelated-histories-git-error">这里</a>找到了解决方案。</p>
+<blockquote>
+<p><code>fatal: refusing to merge unrelated histories</code>这个报错指的是git正在尝试把两个不相关的project给merge到一起（或者说，有两个project，它们之间没有意识到另一方的存在，它们各自都有自己的commit)，这样一来git就无从判断究竟该舍弃哪些文件、更新哪些文件，只能报错。<br><img src="git-pull-error/git-merge-error.png" alt="git merge error"><br>造成这种情况一般有两种可能：  </p>
+<ul>
+<li>你之前克隆了这个repo，但是<code>./.git</code>文件夹里面的信息现在损坏了。这就使得git无法确定你本地repo的历史和你的意图，当你push或者pull远程repo的时候就会报这个错。  </li>
+<li>还有一种情况，你在你的repo上添了几个commit，然后你pull远程repo。但这个时候远程repo已经有别的commit的了，现在git拿不准要不要删了你本地的commit，就只能报错了。<br>解决办法很简单，在命令后面加一个<code>--allow-unrelated-historie</code>的参数即可，比如：  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plain">git pull origin master --allow-unrelated-histories<br></code></pre></td></tr></table></figure>
+</li>
+</ul>
+</blockquote>
+<p>看到这个命令我突然意识到我犯了一个傻逼的错误：我没有指定要pull的branch。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plain">git pull &lt;origin&gt; [branch]<br></code></pre></td></tr></table></figure>
+<p>如果不指定branch的话，命令默认pull的branch是master。而根据GitHub的规则，master必须放编译好的html页面及其资源，所以我把自己hexo博客的source以及theme里的相关配置文件全部放在了一个叫hexo的branch里。因此这个平板的repo里全是hexo branch里的文件。checkou一下果然如此：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plain">ascdut@FrozenSatellite:~&#x2F;laurenfrost.github.io$ git checkout<br>M       package.json<br>Your branch is up to date with &#39;origin&#x2F;hexo&#39;.<br></code></pre></td></tr></table></figure>
+<p>那么在命令里加上hexo不就解决了吗？<br>Naive！又报错了！  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs plain">git pull https:&#x2F;&#x2F;github.com&#x2F;laurenfrost&#x2F;laurenfrost.github.io.git hexo<br>remote: Enumerating objects: 130, done.<br>remote: Counting objects: 100% (130&#x2F;130), done.<br>remote: Compressing objects: 100% (44&#x2F;44), done.<br>remote: Total 82 (delta 43), reused 77 (delta 38), pack-reused 0<br>Unpacking objects: 100% (82&#x2F;82), done.<br>From https:&#x2F;&#x2F;github.com&#x2F;laurenfrost&#x2F;laurenfrost.github.io<br> * branch            hexo       -&gt; FETCH_HEAD<br>Updating d68e6da..f1e023c<br>error: Your local changes to the following files would be overwritten by merge:<br>        package.json<br>Please commit your changes or stash them before you merge.<br>Aborting<br></code></pre></td></tr></table></figure>
+<p>本地repo跟远程repo相比还是有change，还提示我要么先commit，要么就stash它们。  </p>
+<h2 id="git-stash"><a href="#git-stash" class="headerlink" title="git stash"></a><code>git stash</code></h2><p>stash是啥？是没见过的浮莲子啊。  </p>
+<blockquote>
+<p>stash 英 [stæʃ]    美 [stæʃ]<br>v. 存放；贮藏；隐藏；<br>n. 贮藏物;</p>
+</blockquote>
+<p>根据<a target="_blank" rel="noopener" href="https://blog.csdn.net/liyazhen2011/article/details/83501134">这个博客</a>所说，stash可以把当前工作现场“保存”起来，等以后恢复现场后继续工作。</p>
+<blockquote>
+<p>假设有两个分支，master和subWork，当前分支是subWork。<br>当前分支subWork上的工作尚未完成，如果有另一项任务需要优先完成，或者出现BUG需要立刻修复。此时需要另外创建一个分支来工作，可以把当前工作现场“保存”起来，等以后恢复现场后继续工作。<br>一开始的状态是这样的：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs plain">$ git status<br>On branch subWork<br>Changes to be committed:<br>  (use &quot;git reset HEAD &lt;file&gt;...&quot; to unstage)<br> <br>   modified:   test.txt<br></code></pre></td></tr></table></figure>
+<p>这个时候我们用stash来保存工作现场：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plain">$ git stash<br></code></pre></td></tr></table></figure>
+<p>然后我们再查看状态，工作区就是干净的：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs plain">$ git status<br>On branch subWork<br>nothing to commit (working directory clean)<br></code></pre></td></tr></table></figure>
+<p>接下来我们就能进行正常的工作了。<br>等工作完成之后，一开始的工作现场还能恢复：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plain">$ git stash pop<br></code></pre></td></tr></table></figure>
+<p><code>git stash</code>可以多次使用，然后用<code>git stash list</code>来查看所有保存的工作现场，然后用<code>git stash apply</code>来恢复。<br>使用<code>git stash apply</code>恢复之后，被恢复的现场不会自动删除，需要手动使用<code>git stash drop</code>来手动删除。   </p>
+</blockquote>
+<h2 id="其他方案"><a href="#其他方案" class="headerlink" title="其他方案"></a>其他方案</h2><p>而且对于这种报错，其实除了stash之外还有别的思路存在：<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/14318234/how-do-i-ignore-an-error-on-git-pull-about-my-local-changes-would-be-overwritt">为什么不问问神奇的stackoverflow呢</a>?<br>这个页面里大佬们提供了好几个方法。  </p>
+<h3 id="stash"><a href="#stash" class="headerlink" title="stash"></a>stash</h3><p>首先是前面说的stash：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plain">git stash push --include-untracked<br></code></pre></td></tr></table></figure>
+<p><code>--include-untracked</code>这个参数可以连git没有track的文件也一起保存。  </p>
+<h3 id="直接overwrite"><a href="#直接overwrite" class="headerlink" title="直接overwrite"></a>直接overwrite</h3><p>可以干脆不要本地的修改了，直接让远程的repo内容覆盖这些修改：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs plain">git checkout HEAD^ file&#x2F;to&#x2F;overwrite<br>git pull<br></code></pre></td></tr></table></figure>
+
+<h3 id="reset"><a href="#reset" class="headerlink" title="reset"></a>reset</h3><p>更干脆的，直接放弃到上次push之前的修改，全盘接受远程repo：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs plain">git reset --hard<br>git pull<br></code></pre></td></tr></table></figure>
+
+<h2 id="感想"><a href="#感想" class="headerlink" title="感想"></a>感想</h2><p>git的使用像写命令行脚本一样，非常灵活，可以说条条大路通罗马，关键在于理解它的工作原理。一旦吃透了它的工作机制，解决这些小问题便是易如反掌了。<br>关键还是要多熟悉熟悉它们。  </p>
+<h2 id="参考内容"><a href="#参考内容" class="headerlink" title="参考内容"></a>参考内容</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://www.educative.io/edpresso/the-fatal-refusing-to-merge-unrelated-histories-git-error">educative</a>  </li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/liyazhen2011/article/details/83501134">万里归来少年心的CSDN博客</a>  </li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/14318234/how-do-i-ignore-an-error-on-git-pull-about-my-local-changes-would-be-overwritt">stack overflow</a>  </li>
+</ol>
+<div id="paginator"></div></div><div id="post-footer"><hr><a href="/2020/08/18/linux-cpu-scheduling/">← Prev 论文阅读：Towards Transparent CPU Scheduling</a><span style="color: #fe2"> | </span><a href="/2020/07/20/clear-cpu-cache/">思考：如何清掉CPU的cache Next →</a><hr></div><div id="bottom-btn"><a id="to-index" href="#post-index" title="index">≡</a><a id="to-top" href="#post-title" title="to top">∧</a></div><div id="Valine"></div><script>new Valine({
+ el: '#Valine'
+ , appId: 'uyrmyOMoruPODMfC9D5LwLLo-gzGzoHsz'
+ , appKey: 'WCEOpH3VI138eAxVITivdGSv'
+ , placeholder: '此条评论委托企鹅物流发送'
+})</script></div></article><aside><div id="about"><a href="/" id="logo"><img src="https://ak.hypergryph.com/assets/index/images/ak/pc/faction/1.png" alt="Logo"></a><h1 id="Dr"><a href="/about"> Dr.Laurenfrost</a></h1><section id="total"><a id="total-archives" href="/archives"><span class="total-title">Archives Total:</span><span class="total-number">13</span></a><div id="total-tags"><span class="total-title">Tags:</span><span class="total-number">11</span></div><div id="total-categories"><span class="total-title">Categories:</span><span class="total-number">8</span></div></section></div><div id="aside-block"><h1>INDEX</h1><div id="post-index"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#unrelated-histories"><span class="toc-number">1.</span> <span class="toc-text">unrelated histories</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#git-stash"><span class="toc-number">2.</span> <span class="toc-text">git stash</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E6%96%B9%E6%A1%88"><span class="toc-number">3.</span> <span class="toc-text">其他方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#stash"><span class="toc-number">3.1.</span> <span class="toc-text">stash</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B4%E6%8E%A5overwrite"><span class="toc-number">3.2.</span> <span class="toc-text">直接overwrite</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#reset"><span class="toc-number">3.3.</span> <span class="toc-text">reset</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%84%9F%E6%83%B3"><span class="toc-number">4.</span> <span class="toc-text">感想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E5%86%85%E5%AE%B9"><span class="toc-number">5.</span> <span class="toc-text">参考内容</span></a></li></ol></div></div><footer><nobr><span class="text-title">©</span><span class="text-content">2020 to ????</span></nobr><wbr><nobr><span class="text-title">ICP</span><span class="text-content">备案个屁</span></nobr><wbr><nobr><span class="text-title">Auther</span><span class="text-content">Laurenfrost</span></nobr><wbr><wbr><nobr>published with&nbsp;<a target="_blank" rel="noopener" href="http://hexo.io">Hexo&nbsp;</a></nobr><wbr><nobr>Theme&nbsp;<a target="_blank" rel="noopener" href="https://github.com/Yue-plus/hexo-theme-arknights">Arknight&nbsp;</a></nobr><wbr><nobr>by&nbsp;<a target="_blank" rel="noopener" href="https://github.com/Yue-plus">Yue_plus</a></nobr></footer></aside></main><canvas id="canvas-dust"></canvas><script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script><script src="/js/arknights.js"></script></body></html>
