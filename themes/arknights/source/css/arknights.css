@@ -265,6 +265,7 @@ main {
 
 article {
   flex-grow: 1;
+  line-height: 150%;
   min-width: 1px;
   max-height: 100%;
   overflow-y: auto; }
@@ -718,6 +719,7 @@ aside {
     overflow: visible; }
     main article {
       width: 100%;
+      line-height: 150%;
       max-height: none;
       padding: 0;
       flex-shrink: 0;
