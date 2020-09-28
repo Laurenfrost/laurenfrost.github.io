@@ -1,8 +1,20 @@
 ---
-title: Barefoot 中的 HMM Map Matching 详解
+title: Barefoot 中的隐马尔可夫地图匹配详解
 date: 2020-09-24 17:21:00
 tags: 隐马尔科夫模型
 ---
+
+### 基础
+
+隐马尔可夫模型（Hidden Markov Model，缩写成 HMM）假设系统的状态只能通过时间来间接测量。
+
+在地图匹配（map matching）中，我们有一组位置测量值（position measurement），比如说 GPS 数据。这组测量值其实就隐含了这个被测物体在地图上移动轨迹的信息，比如说它经过了哪条路、拐了哪几个弯。这个过程其实是符合上述的隐马尔可夫模型的假设的。所以用它来解决地图匹配问题也变得理所当然。
+
+隐马尔可夫地图匹配（HMM Map Matching）是一种非常鲁棒的方法，可以很准确地从位置测量中猜测出被测物体在地图上移动轨迹。[<sup>1</sup>](#refer-1) [<sup>2</sup>](#refer-2) 当然，系统已知地图上道路的位置和它们之间的连接。
+
+有一组位置测量 _z<sub>0</sub>_, _z<sub>1</sub>_, ..., _z<sub>T</sub>_，其中时间 _t_ _(0 &le; t &le; T)_ 下的一个测量就是 _z<sub>t</sub>_
+
+A sequence of position measurements _z<sub>0</sub>_, _z<sub>1</sub>_, ..., _z<sub>T</sub>_ is map matched by finding for each measurement _z<sub>t</sub>_, made at some time _t_ _(0 &le; t &le; T)_, its most likely matching on the map _s<sub>t</sub><sup>i</sup>_ from a set of ___matching candidates___ _S<sub>t</sub> = {s<sub>t</sub><sup>1</sup>, ..., s<sub>t</sub><sup>n</sup>}_. A set of matching candidates _S<sub>t</sub>_ is here referred to as a ___candidate vector___. For each consecutive pair of candidate vectors _S<sub>t</sub>_ and _S<sub>t+1</sub>_ _(0 &le; t &lt; T)_, there is a transition between each pair of matching candidates _s<sub>t</sub><sup>i</sup>_ and _s<sub>t+1</sub><sup>j</sup>_ which is the route between map positions in the map. An illustration of the HMM with matching candidates and transitions is shown in the figure below.
 
 Barefoot's map matching API consists of four main components. This includes a matcher component that performs map matching with a HMM filter iteratively for each position measurement _z<sub>t</sub>_ of an object. It also includes a state memory component that stores candidate vectors _S<sub>t</sub>_ and their probabilities _p_; and it can be accessed to get the current position estimate _s&#773;<sub>t</sub>_ or the most likely path (_s<sub>0</sub>_ ... _s<sub>t</sub>_). Further, it includes a map component for spatial search of matching candidates _S<sub>t</sub>_ near the measured position _z<sub>t</sub>_; and a router component to find routes _&lang;s<sub>t-1</sub>,s<sub>t</sub>&rang;_ between pairs of candidates _(s<sub>t-1</sub>,s<sub>t</sub>)_.
 
@@ -111,3 +123,119 @@ k-State 数据结构用于存储状态数据，它包含**候选向量**（即�
 <img src="https://github.com/bmwcarit/barefoot/raw/master/doc-files/com/bmwcarit/barefoot/markov/kstate-6.png?raw=true" width="150" hspace="40">
 </p>
 
+### json 格式
+
+k-State 的 json 表达由参数 `k` `t` 以及两个 json 数组 `sequence` 和 `candidates`。
+
++ `sequence` 包含每一次采样的测量信息和候选向量。
+  + `sample` 就是某一次采样的位置测量信息。
+  + `vector` 对应该次测量的候选向量。
+    + `candid` 是候选向量中，某个 id。
+    + `predid` 则是这个候选匹配的前一个候选匹配的 id。
+
++ `candidates` 包含候选匹配的信息，以及过滤器概率和序列概率。
+  + `candidate` 的 `id` 就是 `candid` 和 `predid` 所引用的 id。
+  + `count` 仅用于k-State数据结构的收敛，是指后继候选向量中以该匹配候选向量作为其前身的匹配候选向量的数目。
+  + `point` 为地图中的位置。
+  + `road` 则是道路的 id。
+  + `frac` 是 fraction。
+  + `transition` 如果存在，则它表示从上一匹配到当前匹配的路径 `route`。
+    + `source` 表示路径的起点，`target` 表示路径的终点。
+      + `road` 和 `frac` 进一步记录 `source` 和 `target` 在地图上的准确位置。
+    + `roads` 则具体记录该路径所经过的道路 id。
+
+举个例子：
+
+```json
+{
+  "sequence": [
+    {
+      "sample": {
+        "id": "a1396ab7-7caa-4c31-9f3c-8982055e3de6",
+        "point": "POINT (11.536577179945997 48.14905556426255)",
+        "time": 1410325357000
+      },
+      "vector": [
+        {
+          "candid": "e649f976-564a-4760-9a74-c82ba6c4653e",
+          "predid": ""
+        }
+      ]
+    },
+    {
+      "sample": {
+        "id": "a1396ab7-7caa-4c31-9f3c-8982055e3de6",
+        "point": "POINT (11.536219651738836 48.14672536176703)",
+        "time": 1410325372000
+      },
+      "vector": [
+        {
+          "candid": "648cd380-f317-4ebb-b9e2-650a80054bf7",
+          "predid": "e649f976-564a-4760-9a74-c82ba6c4653e"
+        },
+        {
+          "candid": "6b347e77-eb92-43d3-a60d-69d9bb71f9d4",
+          "predid": "e649f976-564a-4760-9a74-c82ba6c4653e"
+        }
+      ]
+    }
+  ],
+  "candidates": [
+    {
+      "count": 2,
+      "candidate": {
+        "filtprob": 0.11565717758307356,
+        "id": "e649f976-564a-4760-9a74-c82ba6c4653e",
+        "point": {
+          "frac": 0.4104557158596576,
+          "road": 9362030
+        },
+        "seqprob": -1.0999901830140701
+      }
+    },
+    {
+      "count": 0,
+      "candidate": {
+        "filtprob": 0.2370833183857761,
+        "id": "648cd380-f317-4ebb-b9e2-650a80054bf7",
+        "point": {
+          "frac": 0.06531311234979269,
+          "road": 8533290
+        },
+        "seqprob": -3.2870414276380666,
+        "transition": {
+          "route": {
+            "roads": [
+              9362030,
+              ...
+              8533290
+            ],
+            "source": {
+              "frac": 0.4104557158596576,
+              "road": 9362030
+            },
+            "target": {
+              "frac": 0.06531311234979269,
+              "road": 8533290
+            }
+          }
+        }
+      }
+    },
+    ...
+  ],
+  "k": -1,
+  "t": -1
+}
+```
+
+
+
+
+### 参考文献
+
+<div id="refer-1"></div>
+<p>[1] P. Newson and J. Krumm. Hidden Markov Map Matching Through Noise and Sparseness. In Proceedings of International Conference on Advances in Geographic Information Systems, 2009.</p>
+
+<div id="refer-2"></div>
+<p>[2] C.Y. Goh, J. Dauwels, N. Mitrovic, M.T. Asif, A. Oran, and P. Jaillet. Online map-matching based on Hidden Markov model for real-time traffic sensing applications. In International IEEE Conference on Intelligent Transportation Systems, 2012.</p>
