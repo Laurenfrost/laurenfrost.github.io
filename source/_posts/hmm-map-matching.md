@@ -113,8 +113,8 @@ k-State 数据结构用于存储状态数据，它包含**候选向量**（即�
 
 后续的迭代过程基本都是重复上述过程：
 * matcher 抓取 _S<sub>t-1</sub>_。
-* 计算每个候选匹配 _s<sub>t</sub><sub>i</sub> &#8712; S<sub>t</sub>_ 的过滤器概率和序列概率。
-* 计算每个候选匹配最有可能的各自的前任候选匹配 _s<sub>0</sub><sub>i</sub> &#8712; S<sub>0</sub>_。
+* 计算每个候选匹配 _s<sub>t</sub><sup>i</sup> &#8712; S<sub>t</sub>_ 的过滤器概率和序列概率。
+* 计算每个候选匹配最有可能的各自的前任候选匹配 _s<sub>t-1</sub><sup>i</sup> &#8712; S<sub>t-1</sub>_。
 * 更新 k-State 状态数据，删除上个迭代中的多余数据（没在序列上的的候选匹配）。
 
 <p align="center">
@@ -136,9 +136,9 @@ k-State 的 json 表达由参数 `k` `t` 以及两个 json 数组 `sequence` 和
 + `candidates` 包含候选匹配的信息，以及过滤器概率和序列概率。
   + `candidate` 的 `id` 就是 `candid` 和 `predid` 所引用的 id。
   + `count` 仅用于k-State数据结构的收敛，是指后继候选向量中以该匹配候选向量作为其前身的匹配候选向量的数目。
-  + `point` 为地图中的位置。
+  + `point` 在该候选匹配中，该点在地图中的位置。
   + `road` 则是道路的 id。
-  + `frac` 是 fraction。
+  + `frac` 即 fraction，表示该点在这条道路的什么位置，从一端走到另一端，frac 从 0 到 1 增加。
   + `transition` 如果存在，则它表示从上一匹配到当前匹配的路径 `route`。
     + `source` 表示路径的起点，`target` 表示路径的终点。
       + `road` 和 `frac` 进一步记录 `source` 和 `target` 在地图上的准确位置。
