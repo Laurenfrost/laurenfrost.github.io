@@ -13,3 +13,13 @@ Sammary:
 
 Next week:
 1. Makes Roadmap caching workable.
+
+## 2020-11-06
+Sammary:
+1. Fixed mismatching bug caused by incomplete map caching.
+2. Added a new test for map caching on GitHub Action.
+3. Implementing a new PostGISReader reader to get data of different area in one query.
+
+Next week:
+1. push Copernicus
+2. Waiting assginments.
