@@ -27,6 +27,8 @@ category: 踩坑记录
 
 ![databricks-cluster-config](./databricks-cluster-config.png)
 
+*在这里你调整了 port 之后，别忘了你`databricks-connect configure`的时候，相应的 port 也需要调整，不然它连接不上。*
+
 ### 报错 `A master URL must be set`
 虽然 Azure Databrick 在针对 Scala 的编程建议里写道:
 
@@ -161,3 +163,41 @@ Exception in thread "main" org.apache.spark.SparkException: Job aborted due to s
 我也不知道这段天书在说啥，毕竟我没有清楚地了解 spark 的内部工作机理。
 
 只是个人猜测大概是本地的 spark 和 Azure Databricks 的 spark 之间没有协调好。或许我应该调整一下依赖？
+
+这个 `AccumulatorMetadata` 是个什么鸡巴？让我们看看 spark [源码](https://fossies.org/linux/spark/core/src/main/scala/org/apache/spark/util/AccumulatorV2.scala)：
+
+```scala
+   18 package org.apache.spark.util
+    ...
+   30 private[spark] case class AccumulatorMetadata(
+   31     id: Long,
+   32     name: Option[String],
+   33     countFailedValues: Boolean) extends Serializable
+   34 
+   35 
+   36 /**
+   37  * The base class for accumulators, that can accumulate inputs of type `IN`, and produce output of
+   38  * type `OUT`.
+   39  *
+   40  * `OUT` should be a type that can be read atomically (e.g., Int, Long), or thread-safely
+   41  * (e.g., synchronized collections) because it will be read from other threads.
+   42  */
+   43 abstract class AccumulatorV2[IN, OUT] extends Serializable {
+   44   private[spark] var metadata: AccumulatorMetadata = _
+   45   private[this] var atDriverSide = true
+    ...
+   81   /**
+   82    * Returns the name of this accumulator, can only be called after registration.
+   83    */
+   84   final def name: Option[String] = {
+   85     assertMetadataNotNull()
+   86 
+   87     if (atDriverSide) {
+   88       metadata.name.orElse(AccumulatorContext.get(id).flatMap(_.metadata.name))
+   89     } else {
+   90       metadata.name
+   91     }
+   92   }
+    ...
+```
+所以这是个 spark-3.0 的 API，而我要的环境是 Databricks 5.5 LTS 对应的是 spark-2.4.3，这一定有问题。
