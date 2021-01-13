@@ -164,7 +164,9 @@ Exception in thread "main" org.apache.spark.SparkException: Job aborted due to s
 
 只是个人猜测大概是本地的 spark 和 Azure Databricks 的 spark 之间没有协调好。或许我应该调整一下依赖？
 
-这个 `AccumulatorMetadata` 是个什么鸡巴？让我们看看 spark [源码](https://fossies.org/linux/spark/core/src/main/scala/org/apache/spark/util/AccumulatorV2.scala)：
+---
+
+重整旗鼓，让我们看看这个 `AccumulatorMetadata` 是个什么鸡巴？[spark 源码](https://fossies.org/linux/spark/core/src/main/scala/org/apache/spark/util/AccumulatorV2.scala)：
 
 ```scala
    18 package org.apache.spark.util
@@ -200,4 +202,8 @@ Exception in thread "main" org.apache.spark.SparkException: Job aborted due to s
    92   }
     ...
 ```
-所以这是个 spark-3.0 的 API，而我要的环境是 Databricks 5.5 LTS 对应的是 spark-2.4.3，这一定有问题。
+<s>所以这是个 spark-3.0 的 API，而我要的环境是 Databricks 5.5 LTS 对应的是 spark-2.4.3，这一定有问题。</s>
+
+是我搞错了，通过查阅[文档](https://spark.apache.org/docs/2.4.3/api/scala/index.html#org.apache.spark.util.AccumulatorV2)和[源码](https://github.com/apache/spark/blob/v2.4.3/core/src/main/scala/org/apache/spark/util/AccumulatorV2.scala)，其实在 2.4.3 里是有这个接口的，基本就是上面这个代码，所以我的这个猜测是错的。(跪了)
+
+
