@@ -48,6 +48,15 @@ val spark = SparkSession.builder().master("local[*]").getOrCreate()
 
 然后它才会尝试连接到 Azure Databrick 的 cluster。
 
+### 报错 `Result for RPC Some lost`
+完整的报错信息是：
+```
+Exception in thread "main" java.lang.IllegalArgumentException: requirement failed: Result for RPC Some(c74963ef-2411-4c05-9c06-bdd2faeba2ff) lost, please retry your request.
+```
+
+网络波动，重试一遍就好。
+
+
 ### 报错 `java class may not be present on the remote cluster`
 完整的报错信息是：
 ```
@@ -206,4 +215,89 @@ Exception in thread "main" org.apache.spark.SparkException: Job aborted due to s
 
 是我搞错了，通过查阅[文档](https://spark.apache.org/docs/2.4.3/api/scala/index.html#org.apache.spark.util.AccumulatorV2)和[源码](https://github.com/apache/spark/blob/v2.4.3/core/src/main/scala/org/apache/spark/util/AccumulatorV2.scala)，其实在 2.4.3 里是有这个接口的，基本就是上面这个代码，所以我的这个猜测是错的。(跪了)
 
+---
 
+When I package jar file, those dependences are also copied into the file. And some of them have conflict with runtime env in remote cluster, which leads to the error `cannot assign instance of scala.None$ to field`. So, configure build.sbt and prevent unnecessary libraries would help. (I hope so.)
+
+### 报错 `Failed to add jar file`
+完整的报错信息：
+```
+2021-01-19 08:18:06,056 ERROR [main] SparkContext: Failed to add ./jars/com.optimind.copernicus.spark.jar to Spark environment
+java.lang.IllegalArgumentException: Error while instantiating 'org.apache.spark.sql.internal.SessionStateBuilder':
+	at org.apache.spark.sql.SparkSession$.org$apache$spark$sql$SparkSession$$instantiateSessionState(SparkSession.scala:1178) ~[spark-sql_2.11-2.4.3.jar:2.4.3]
+	at org.apache.spark.sql.SparkSession$$anonfun$sessionState$2.apply(SparkSession.scala:170) ~[spark-sql_2.11-2.4.3.jar:2.4.3]
+	at org.apache.spark.sql.SparkSession$$anonfun$sessionState$2.apply(SparkSession.scala:169) ~[spark-sql_2.11-2.4.3.jar:2.4.3]
+	at scala.Option.getOrElse(Option.scala:121) ~[scala-library-2.11.12.jar:na]
+	at org.apache.spark.sql.SparkSession.sessionState$lzycompute(SparkSession.scala:169) ~[spark-sql_2.11-2.4.3.jar:2.4.3]
+	at org.apache.spark.sql.SparkSession.sessionState(SparkSession.scala:166) ~[spark-sql_2.11-2.4.3.jar:2.4.3]
+	at org.apache.spark.sql.SparkSession.conf$lzycompute(SparkSession.scala:198) ~[spark-sql_2.11-2.4.3.jar:2.4.3]
+	at org.apache.spark.sql.SparkSession.conf(SparkSession.scala:198) ~[spark-sql_2.11-2.4.3.jar:2.4.3]
+	at com.databricks.service.SparkClient$.clientEnabled(SparkClient.scala:206) ~[spark-sql_2.11-2.4.3.jar:2.4.3]
+	at com.databricks.spark.util.SparkClientContext$.clientEnabled(SparkClientContext.scala:108) ~[spark-core_2.11-2.4.3.jar:2.4.3]
+	at org.apache.spark.SparkContext.addJarFile$1(SparkContext.scala:1996) [spark-core_2.11-2.4.3.jar:2.4.3]
+	at org.apache.spark.SparkContext.addJar(SparkContext.scala:2021) [spark-core_2.11-2.4.3.jar:2.4.3]
+Caused by: java.util.concurrent.TimeoutException: null
+	at org.spark_project.jetty.client.util.FutureResponseListener.get(FutureResponseListener.java:109) ~[spark-core_2.11-2.4.3.jar:2.4.3]
+	at org.spark_project.jetty.client.HttpRequest.send(HttpRequest.java:676) ~[spark-core_2.11-2.4.3.jar:2.4.3]
+	at com.databricks.service.DBAPIClient.get(DBAPIClient.scala:81) ~[spark-sql_2.11-2.4.3.jar:2.4.3]
+	at com.databricks.service.DBAPIClient.jsonGet(DBAPIClient.scala:108) ~[spark-sql_2.11-2.4.3.jar:2.4.3]
+	at com.databricks.service.SparkServiceDebugHelper$.validateSparkServiceToken(SparkServiceDebugHelper.scala:130) ~[spark-sql_2.11-2.4.3.jar:2.4.3]
+	at com.databricks.service.SparkClientManager$class.getForCurrentSession(SparkClient.scala:287) ~[spark-sql_2.11-2.4.3.jar:2.4.3]
+	at com.databricks.service.SparkClientManager$.getForCurrentSession(SparkClient.scala:366) ~[spark-sql_2.11-2.4.3.jar:2.4.3]
+	at com.databricks.service.SparkClient$.getServerHadoopConf(SparkClient.scala:245) ~[spark-sql_2.11-2.4.3.jar:2.4.3]
+	at com.databricks.spark.util.SparkClientContext$.getServerHadoopConf(SparkClientContext.scala:222) ~[spark-core_2.11-2.4.3.jar:2.4.3]
+	at org.apache.spark.SparkContext$$anonfun$hadoopConfiguration$1.apply(SparkContext.scala:317) ~[spark-core_2.11-2.4.3.jar:2.4.3]
+	at org.apache.spark.SparkContext$$anonfun$hadoopConfiguration$1.apply(SparkContext.scala:312) ~[spark-core_2.11-2.4.3.jar:2.4.3]
+	at scala.util.DynamicVariable.withValue(DynamicVariable.scala:58) ~[scala-library-2.11.12.jar:na]
+	at org.apache.spark.SparkContext.hadoopConfiguration(SparkContext.scala:311) [spark-core_2.11-2.4.3.jar:2.4.3]
+	at org.apache.spark.sql.internal.SharedState.<init>(SharedState.scala:67) ~[spark-sql_2.11-2.4.3.jar:2.4.3]
+	at org.apache.spark.sql.SparkSession$$anonfun$sharedState$1.apply(SparkSession.scala:145) ~[spark-sql_2.11-2.4.3.jar:2.4.3]
+	at org.apache.spark.sql.SparkSession$$anonfun$sharedState$1.apply(SparkSession.scala:145) ~[spark-sql_2.11-2.4.3.jar:2.4.3]
+	at scala.Option.getOrElse(Option.scala:121) ~[scala-library-2.11.12.jar:na]
+	at org.apache.spark.sql.SparkSession.sharedState$lzycompute(SparkSession.scala:145) ~[spark-sql_2.11-2.4.3.jar:2.4.3]
+	at org.apache.spark.sql.SparkSession.sharedState(SparkSession.scala:144) ~[spark-sql_2.11-2.4.3.jar:2.4.3]
+	at org.apache.spark.sql.internal.BaseSessionStateBuilder.build(BaseSessionStateBuilder.scala:291) ~[spark-sql_2.11-2.4.3.jar:2.4.3]
+	at org.apache.spark.sql.SparkSession$.org$apache$spark$sql$SparkSession$$instantiateSessionState(SparkSession.scala:1175) ~[spark-sql_2.11-2.4.3.jar:2.4.3]
+	... 13 common frames omitted
+```
+
+
+网络波动，重试一遍就好。
+关闭 clash 的 mixin 功能。
+
+
+### 报错 `cannot assign instance`
+完整的报错信息：
+```
+Exception in thread "main" org.apache.spark.SparkException: Job aborted due to stage failure: Task 5 in stage 45.0 failed 4 times, most recent failure: Lost task 5.3 in stage 45.0 (TID 1846, 10.139.64.5, executor 0): java.lang.ClassCastException: cannot assign instance of org.slf4j.impl.Log4jLoggerAdapter to field ch.qos.logback.classic.Logger.parent of type ch.qos.logback.classic.Logger in instance of ch.qos.logback.classic.Logger
+```
+
+我猜大概是我 lib/ 目录下里有个 fat jar 里有 logger 的库。待我删了它。
+
+```
+21/01/19 09:16:11 WARN SparkEnv: Exception while deleting Spark temp dir: C:\Users\Bellf\AppData\Local\Temp\spark-ecd10e21-e079-41ac-b327-c88fe36b9c65\userFiles-59b6b2e4-3139-48e7-9836-00b083054018
+java.io.IOException: Failed to delete: C:\Users\Bellf\AppData\Local\Temp\spark-ecd10e21-e079-41ac-b327-c88fe36b9c65\userFiles-59b6b2e4-3139-48e7-9836-00b083054018\slf4j-log4j12-1.7.16.jar
+	at org.apache.spark.network.util.JavaUtils.deleteRecursivelyUsingJavaIO(JavaUtils.java:144)
+	at org.apache.spark.network.util.JavaUtils.deleteRecursively(JavaUtils.java:118)
+	at org.apache.spark.network.util.JavaUtils.deleteRecursivelyUsingJavaIO(JavaUtils.java:128)
+	at org.apache.spark.network.util.JavaUtils.deleteRecursively(JavaUtils.java:118)
+	at org.apache.spark.network.util.JavaUtils.deleteRecursively(JavaUtils.java:91)
+	at org.apache.spark.util.Utils$.deleteRecursively(Utils.scala:1187)
+	at org.apache.spark.SparkEnv.stop(SparkEnv.scala:159)
+	at org.apache.spark.SparkContext$$anonfun$stop$11.apply$mcV$sp(SparkContext.scala:2134)
+	at org.apache.spark.util.Utils$.tryLogNonFatalError(Utils.scala:1506)
+	at org.apache.spark.SparkContext.stop(SparkContext.scala:2133)
+	at org.apache.spark.SparkContext$$anonfun$2.apply$mcV$sp(SparkContext.scala:629)
+	at org.apache.spark.util.SparkShutdownHook.run(ShutdownHookManager.scala:216)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1$$anonfun$apply$mcV$sp$1.apply$mcV$sp(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1$$anonfun$apply$mcV$sp$1.apply(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1$$anonfun$apply$mcV$sp$1.apply(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.Utils$.logUncaughtExceptions(Utils.scala:2121)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1.apply$mcV$sp(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1.apply(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1.apply(ShutdownHookManager.scala:188)
+	at scala.util.Try$.apply(Try.scala:192)
+	at org.apache.spark.util.SparkShutdownHookManager.runAll(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.SparkShutdownHookManager$$anon$2.run(ShutdownHookManager.scala:178)
+	at org.apache.hadoop.util.ShutdownHookManager$1.run(ShutdownHookManager.java:54)
+```
