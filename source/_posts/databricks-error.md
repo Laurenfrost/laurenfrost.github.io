@@ -301,3 +301,62 @@ java.io.IOException: Failed to delete: C:\Users\Bellf\AppData\Local\Temp\spark-e
 	at org.apache.spark.util.SparkShutdownHookManager$$anon$2.run(ShutdownHookManager.scala:178)
 	at org.apache.hadoop.util.ShutdownHookManager$1.run(ShutdownHookManager.java:54)
 ```
+
+## Databricks Notebook 问题
+
+### 报错 `not found value expr`
+问题代码：
+```scala
+val nodes = spark.read.format("jdbc")......load()
+nodes.withColumn("shapeWKT", expr("ST_GeomFromWKB(shape)")).show()
+```
+
+报错内容：
+```log
+command-633362346182315:33: error: not found: value expr
+nodes.withColumn("shapeWKT", expr("ST_GeomFromWKB(shape)")).show()
+```
+
+解决办法：
+```scala
+import org.apache.spark.sql.functions._
+```
+
+参考资料：  
+[https://stackoverflow.com/questions/36330024/sparksql-not-found-value-expr/36330128](https://stackoverflow.com/questions/36330024/sparksql-not-found-value-expr/36330128)
+
+### 报错 `Undefined function: 'ST_GeomFromWKB'`
+问题代码：
+```scala
+import org.apache.spark.sql.types._
+import org.apache.spark.sql.functions._
+
+val nodes = spark.read.format("jdbc")......load()
+nodes.withColumn("shapeWKT", expr("ST_GeomFromWKB(shape)")).show()
+```
+
+报错内容：
+```log
+org.apache.spark.sql.AnalysisException: Undefined function: 'ST_GeomFromWKB'.
+ This function is neither a registered temporary function nor a permanent function registered in the database 'default'.; line 1 pos 0
+```
+
+解决办法：  
+在 cluster 的 advanced option 里，给 spark config 添加下列语句：
+```
+spark.kryo.registrator
+org.datasyslab.geospark.serde.GeoSparkKryoRegistrator
+```
+然后 import 相关库：
+```scala
+import org.apache.spark.serializer.KryoSerializer
+import org.datasyslab.geosparkviz.sql.utils.GeoSparkVizRegistrator
+import org.datasyslab.geosparksql.utils.{Adapter, GeoSparkSQLRegistrator}
+import org.datasyslab.geosparkviz.core.Serde.GeoSparkVizKryoRegistrator
+GeoSparkSQLRegistrator.registerAll(spark)
+GeoSparkVizRegistrator.registerAll(spark)
+```
+
+参考资料：  
+[https://stackoverflow.com/questions/62830434/st-geomfromtext-function-using-spark-java](https://stackoverflow.com/questions/62830434/st-geomfromtext-function-using-spark-java)
+
