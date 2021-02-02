@@ -360,3 +360,56 @@ GeoSparkVizRegistrator.registerAll(spark)
 参考资料：  
 [https://stackoverflow.com/questions/62830434/st-geomfromtext-function-using-spark-java](https://stackoverflow.com/questions/62830434/st-geomfromtext-function-using-spark-java)
 
+### 报错 `Can not create the managed table`
+简而言之就是不能 overwrite。
+
+报错代码：
+```scala
+SomeData_df.write.mode("overwrite").saveAsTable("SomeData")
+```
+
+报错内容：
+```log
+org.apache.spark.sql.AnalysisException: Can not create the managed table('SomeData'). 
+The associated location('dbfs:/user/hive/warehouse/somedata') already exists.;
+```
+
+解决办法：
+明明是 overwrite 模式，但还是不行，真傻逼。
+
++ 思路1：直接删除  
+  它不是已经存在了吗，删了就完事儿了。
+  ```scala
+  dbutils.fs.rm("dbfs:/user/hive/warehouse/SomeData", recurse=true)
+  ```
+
++ 思路2：调整 Databricks 设置
+  ```scala
+  spark.conf.set("spark.sql.legacy.allowCreatingManagedTableUsingNonemptyLocation","true")
+  ```
+
+  但这个选项在 Spark 3.0.0 中被去掉了。如果用更高版本的 Databricks 集群的话就不行。会有这样的报错：
+  ```log
+  Caused by: org.apache.spark.sql.AnalysisException: The SQL config 'spark.sql.legacy.allowCreatingManagedTableUsingNonemptyLocation' was removed in the version 3.0.0.
+  It was removed to prevent loosing of users data for non-default value.;
+  ```
+  要解决这个问题，必须写出完整的文件路径才行。
+
++ 思路3：直接 overwrite 文件的绝对路径。
+  ```scala
+  df.write \
+    .option("path", "hdfs://cluster_name/path/to/my_db") \
+    .mode("overwrite") \
+    .saveAsTable("my_db.my_table")
+  ```
+
++ 思路4：修改 cluster 配置  
+  这个基本上是思路 2 的加强版。  
+  在 cluster 的 advanced option 里，给 spark config 添加下列语句：
+  ```
+  spark.sql.legacy.allowCreatingManagedTableUsingNonemptyLocation true
+  ```
+
+参考资料：  
+[https://docs.microsoft.com/en-us/azure/databricks/kb/jobs/spark-overwrite-cancel](https://docs.microsoft.com/en-us/azure/databricks/kb/jobs/spark-overwrite-cancel)
+[https://stackoverflow.com/questions/55380427/azure-databricks-can-not-create-the-managed-table-the-associated-location-alre](https://stackoverflow.com/questions/55380427/azure-databricks-can-not-create-the-managed-table-the-associated-location-alre)
