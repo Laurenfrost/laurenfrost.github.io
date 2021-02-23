@@ -23,6 +23,10 @@ date: 2020-04-22 21:42:58
 \>[SadAngel的博客](https://www.sadangel.cn/)
 
 \>[小风yusa的博客](https://blog.sena.moe/)
+
+\>[飞龙Project](https://feilongproject.com/)
+
+\>[小栗工作室](http://blog.ligzs.cn)
   
 ---
 
