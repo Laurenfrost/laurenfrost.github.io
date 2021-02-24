@@ -413,3 +413,43 @@ The associated location('dbfs:/user/hive/warehouse/somedata') already exists.;
 参考资料：  
 [https://docs.microsoft.com/en-us/azure/databricks/kb/jobs/spark-overwrite-cancel](https://docs.microsoft.com/en-us/azure/databricks/kb/jobs/spark-overwrite-cancel)
 [https://stackoverflow.com/questions/55380427/azure-databricks-can-not-create-the-managed-table-the-associated-location-alre](https://stackoverflow.com/questions/55380427/azure-databricks-can-not-create-the-managed-table-the-associated-location-alre)
+
+
+## Databricks Cluster 问题
+
+### Java heap space 不够
+`java.lang.OutOfMemoryError: Java heap space`
+```
+21/02/10 10:41:45 WARN TaskSetManager: Lost task 22.2 in stage 13.0 (TID 47942, 10.139.64.12, executor 19): java.lang.OutOfMemoryError: Java heap space
+	at java.util.HashMap.resize(HashMap.java:704)
+	at java.util.HashMap.putVal(HashMap.java:663)
+	at java.util.HashMap.put(HashMap.java:612)
+	at com.bmwcarit.barefoot.topology.Graph.construct(Graph.java:94)
+	at com.bmwcarit.barefoot.roadmap.RoadMap.constructNetworkTopology(RoadMap.kt:147)
+	at com.optimind.copernicus.spark.Main$$anonfun$4.apply(Main.scala:103)
+	at com.optimind.copernicus.spark.Main$$anonfun$4.apply(Main.scala:86)
+	at org.apache.spark.sql.execution.MapGroupsExec$$anonfun$10$$anonfun$apply$4.apply(objects.scala:365)
+	at org.apache.spark.sql.execution.MapGroupsExec$$anonfun$10$$anonfun$apply$4.apply(objects.scala:364)
+	at scala.collection.Iterator$$anon$12.nextCur(Iterator.scala:435)
+	at scala.collection.Iterator$$anon$12.hasNext(Iterator.scala:441)
+	at org.apache.spark.sql.catalyst.expressions.GeneratedClass$GeneratedIteratorForCodegenStage3.processNext(Unknown Source)
+	at org.apache.spark.sql.execution.BufferedRowIterator.hasNext(BufferedRowIterator.java:43)
+	at org.apache.spark.sql.execution.WholeStageCodegenExec$$anonfun$13$$anon$1.hasNext(WholeStageCodegenExec.scala:640)
+	at org.apache.spark.sql.execution.datasources.FileFormatWriter$.org$apache$spark$sql$execution$datasources$FileFormatWriter$$executeTask(FileFormatWriter.scala:235)
+	at org.apache.spark.sql.execution.datasources.FileFormatWriter$$anonfun$write$1.apply(FileFormatWriter.scala:173)
+	at org.apache.spark.sql.execution.datasources.FileFormatWriter$$anonfun$write$1.apply(FileFormatWriter.scala:172)
+	at org.apache.spark.scheduler.ResultTask.runTask(ResultTask.scala:90)
+	at org.apache.spark.scheduler.Task.doRunTask(Task.scala:140)
+	at org.apache.spark.scheduler.Task.run(Task.scala:113)
+	at org.apache.spark.executor.Executor$TaskRunner$$anonfun$17.apply(Executor.scala:606)
+	at org.apache.spark.util.Utils$.tryWithSafeFinally(Utils.scala:1541)
+	at org.apache.spark.executor.Executor$TaskRunner.run(Executor.scala:612)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+  ```
+
+解决办法很简单，用更大的instance。
+
+![你需要更大的instance](./more-mem-instance.png)
+
