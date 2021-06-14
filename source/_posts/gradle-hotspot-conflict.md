@@ -1,6 +1,6 @@
 ---
 title: Windows 10 的热点与 Gradle 冲突
-date: 2021-03-03 18：52：00
+date: 2021-03-03 18:52:00
 tags: Gradle
 category: 日常踩坑
 ---
