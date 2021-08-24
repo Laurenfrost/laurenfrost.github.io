@@ -470,4 +470,4 @@ instance 的数量只能让更多的 job 同时运行，也就是跑得更快。
 
 如果你的 instance 跑不了 spark 划分的最大的一个 job，那整个程序就跑不了。
 
-！[更多更多内存](./more-and-more-mem-instance.png)
+![更多更多内存](./more-and-more-mem-instance.png)
