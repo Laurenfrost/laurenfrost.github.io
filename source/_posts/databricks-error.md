@@ -7,6 +7,11 @@ category: 踩坑记录
 
 开宗明义：傻逼 Databricks！真tmd傻逼！！！！！！！！
 
+> 无数次的经验告诉我，instance 的内存大小非常重要！！！  
+> instance 的数量只能让更多的 job 同时运行，也就是跑得更快。但真正决定程序能不能运行的还是 instance 的内存大小。  
+> 如果你的 instance 跑不了 spark 划分的最大的一个 job，那整个程序就跑不了。  
+> 问就是加钱。
+
 ## databricks-connect 问题
 不要以为你的程序打包好之后，上传 Azure Databricks 运行也没问题，就可以高枕无忧。databricks-connect 总是能比你想象得更傻逼！
 
@@ -411,8 +416,8 @@ The associated location('dbfs:/user/hive/warehouse/somedata') already exists.;
   ```
 
 参考资料：  
-[https://docs.microsoft.com/en-us/azure/databricks/kb/jobs/spark-overwrite-cancel](https://docs.microsoft.com/en-us/azure/databricks/kb/jobs/spark-overwrite-cancel)
-[https://stackoverflow.com/questions/55380427/azure-databricks-can-not-create-the-managed-table-the-associated-location-alre](https://stackoverflow.com/questions/55380427/azure-databricks-can-not-create-the-managed-table-the-associated-location-alre)
++ [https://docs.microsoft.com/en-us/azure/databricks/kb/jobs/spark-overwrite-cancel](https://docs.microsoft.com/en-us/azure/databricks/kb/jobs/spark-overwrite-cancel)
++ [https://stackoverflow.com/questions/55380427/azure-databricks-can-not-create-the-managed-table-the-associated-location-alre](https://stackoverflow.com/questions/55380427/azure-databricks-can-not-create-the-managed-table-the-associated-location-alre)
 
 
 ## Databricks Cluster 问题
@@ -453,3 +458,16 @@ The associated location('dbfs:/user/hive/warehouse/somedata') already exists.;
 
 ![你需要更大的instance](./more-mem-instance.png)
 
+--- 分界线 ---
+
+2021-08-24 更新：
+
+不花钱怎么能跑程序？
+
+无数次的经验告诉我，instance 的内存大小非常重要！！！
+
+instance 的数量只能让更多的 job 同时运行，也就是跑得更快。但真正决定程序能不能运行的还是 instance 的内存大小。
+
+如果你的 instance 跑不了 spark 划分的最大的一个 job，那整个程序就跑不了。
+
+！[更多更多内存](./more-and-more-mem-instance.png)
