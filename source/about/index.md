@@ -6,22 +6,23 @@ date: 2020-04-22 12:56:48
 > <img src = 67341740-resized.jpg width = 80% height = 80% alt = "魔女 白月">
 
 > 身份：
-> > 自认为日语水平比代码能力高的CS应届生，家里蹲大军的一员。  
+> > 自认为日语水平比代码能力高的CS码农，家里蹲大军的一员。  
 > > 远程上班中（天天摸鱼  
-> > 在某丢人字幕组里当翻译（累死了  
+> > 在某丢人字幕组里当翻译（摸了  
 > 
 > 技术栈：
-> > 高性能计算
-> > MPI
+> > 高性能计算 + MPI
 > > Linux
 > > 嵌入式
 > > FPGA
-> > Spark（工作需要，刚入坑
+> > Spark + Databricks
+> > React 框架
 >
 > 语言：
-> > C & Fortran
-> > C++ 11
-> > Scala & Kotlin
+> > C & Fortran & C++ 11
+> > Python
+> > Scala
+> > TypeScript
 > 
 > 自评：  
 > > 懒得追新番，只下BDrip；  
