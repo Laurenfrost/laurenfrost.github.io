@@ -1,8 +1,8 @@
 ---
 title: 实验室管理系统畅想
 date: 2021-06-13 22:06:00
-tags: 实验室
-category: 管理系统
+tags: 管理系统
+category: 产品设计
 ---
 
 ## 构想 1
