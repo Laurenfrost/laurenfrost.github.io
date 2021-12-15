@@ -37,6 +37,47 @@ GitHub Actions 只会执行相应 branch 里`.git/workflows/**`目录下的工�
     > 3. If have matched trigger events in the workflow files, trigger the workflows that have the matched trigger events.
 
 
+### 可以执行 private 的 Actions
+
+尽管不是一项正式的用法，但 GitHub Actions 允许通过[`jobs.<job_id>.uses`](https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_iduses)加载写在 private 仓库里的 action。
+
+`{owner}/{repo}/{path}/{filename}@{ref}`
+
+虽然除了“运行指定的`workflow.yaml`”之外，现在的官方文档中没有提及这个直接加载一个项目的功能。但根据 GitHub 社区的回答，曾经是有这个功能的。
+
+可以遵循以下[方法](https://github.community/t/github-action-action-in-private-repository/16063/28)：
+
+```yaml
+name: Awesome Action Example
+
+on:
+  pull_request:
+    types: ['opened', 'edited', 'reopened', 'synchronize']
+
+jobs:
+  awesome:
+    name: Awesome Action
+    runs-on: ubuntu-latest
+    steps:
+      # checkout this repo
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      # checkout the private repo containing the action to run
+      - name: Checkout GitHub Action Repo
+        uses: actions/checkout@v2
+        with:
+          repository: MyOrg/my-action
+          ref: my-ref
+          token: ${{ secrets.GITHUB_TOKEN }} # stored in GitHub secrets
+          path: .github/actions/my-action  # no need for path if actions.yml is in the root dir
+      - name: Run My Action
+        uses: ./.github/actions/my-action 
+```
+
+
+
+
 ## Trigger Events 归纳
 
 记录一下不同操作所触发的事件。
