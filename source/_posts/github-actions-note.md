@@ -51,4 +51,5 @@ GitHub Actions 只会执行相应 branch 里`.git/workflows/**`目录下的工�
 |reviewer通过代码|``|``||
 |reviewer拒绝通过|``|``||
 |合并分支|1. `pull_request`<br>2. `push`|`closed`<br>n/a|先后触发了两个事件|
+|创建分支|1. `create`<br>2. `push`|n/a<br>n/a|先后触发了两个事件|
 
