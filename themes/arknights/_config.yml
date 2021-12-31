@@ -60,10 +60,10 @@ mermaid:
 
 # main menu navigation
 menu:
-  Home: ''
-  Archives: archives/
-  Friends: friends/
-  About: about/
+  Home: '.'
+  Archives: ./archives/
+  Friends: ./friends/
+  About: ./about/
 
 # stylesheets loaded in the <head>
 stylesheets:
