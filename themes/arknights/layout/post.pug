@@ -14,7 +14,7 @@ block content
     const tocContent = toc(page.content, theme.toc)
   #post-bg
     #post-title
-      if dateConf || updatedConf
+      if (dateConf || updatedConf) && page.post-info
         #post-info
           if dateConf
             span date:
@@ -58,28 +58,42 @@ block content
       if tocContent.length > 0
         a#to-index(href="#post-index" title="index") ≡
       a#to-top(href="#post-title" title="to top") ∧
-    if reward === true
+    if reward === true && page.reward
       details#reward
         summary 打赏
         #alipay
           span 支付宝 | Alipay
           br
-          img(src='/img/Alipay.png')
+          img(src= config.root + 'img/Alipay.png')
         #wechat
           span 微信 | WeChat
           br
-          img(src='/img/WeChat.png')
-    #Valine
-    script
-      |new Valine({
-      |  el: '#Valine'
-      |  , appId: '#{appID}'
-      |  , appKey: '#{appKey}'
-      |  , placeholder: '此条评论委托企鹅物流发送'
-      |})
+          img(src= config.root + 'img/WeChat.png')
+    if page.comments
+      if theme.valine.enable === true
+        #Valine
+        script
+          |new Valine({
+          |  el: '#Valine'
+          |  , appId: '#{appID}'
+          |  , appKey: '#{appKey}'
+          |  , placeholder: '此条评论委托企鹅物流发送'
+          |})
+      if theme.gitalk.enable === true
+        #comments
+        script
+          |var gitalk = new Gitalk({
+          |  clientID: '#{theme.gitalk.clientID}',
+          |  clientSecret: '#{theme.gitalk.clientSecret}',
+          |  repo: '#{theme.gitalk.repo}',
+          |  owner: '#{theme.gitalk.owner}',
+          |  admin: [#{theme.gitalk.admin}],
+          |  id: location.pathname,
+          |})
+          |gitalk.render("comments")
 
 block aside-block
   - const tocContent = toc(page.content, theme.toc)
-  if tocContent.length > 0
+  if (tocContent.length > 0)
     h1 INDEX
     #post-index!= tocContent

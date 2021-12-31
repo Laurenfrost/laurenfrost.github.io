@@ -11,23 +11,50 @@
   const asideLogo = theme.aside.logo
   const asideBlock = theme.aside.block_in_top ? 'order: -1' : ''
 
+  var mainStyle = ""
+  var footerStyles = ""
+  if (theme.aside.in_left) {
+    mainStyle = "flex-direction: row-reverse"
+    footerStyle = "text-align: right"
+  }
+
 doctype html
 html(lang=config.language)
   head
     meta(charset='UTF-8')
     meta(name='viewport' content='width=device-width, initial-scale=1.0')
     title= pageTitle
-    script(src='https://cdn.bootcss.com/valine/1.4.4/Valine.min.js')
+    script(src='//unpkg.com/valine/dist/Valine.min.js')
+    if theme.gitalk.enable === true
+      link(rel="stylesheet" href=config.root + "css/gitalk.css")
+      script(src=config.root + "js/gitalk.js")
+    if theme.mermaid.enable === true && theme.mermaid.version !== undefined
+      script(src= "https://unpkg.com/mermaid@" + theme.mermaid.version + "/dist/mermaid.min.js")
+      script
+        | mermaid.initialize({
+        |   startOnLoad: true
+        |   , theme: 'dark'
+        | });
+    link(rel="stylesheet", href=config.root + "css/arknights.css")
     if theme.stylesheets !== undefined && theme.stylesheets.length > 0
       //- stylesheets list from _config.yml
       each url in theme.stylesheets
         link(rel='stylesheet', href=url)
-  body
+    style
+      |@font-face {
+      |  font-family: BenderLight;
+      |  src: local('Bender'), url("#{config.root}font/BenderLight.ttf");
+      |}
+      |@font-face {
+      |  font-family: 'JetBrains Mono';
+      |  src: local('JetBrains Mono'), url('#{config.root}font/JetBrainsMono-Regular.woff2') format('woff2');
+      |}
+  body(style={'background-image': `url(${theme.background_image})`})
     header
       nav
         each url, label in theme.menu
-          a(href=url)= label
-    main
+          a(href= config.root + url)= label
+    main(style=mainStyle)
       article
         if body
           div!= body
@@ -37,11 +64,10 @@ html(lang=config.language)
         #about
           a(href=config.root)#logo
             img(src=asideLogo, alt="Logo")
-            //- img(src="/img/logo.png", alt="Logo")
           h1#Dr
             a(href= theme.aside.dr)=' Dr.' + config.author
           section#total
-            a#total-archives(href="/archives")
+            a#total-archives(href= config.root + "archives")
               span.total-title Archives Total:
               span.total-number= site.posts.length
             #total-tags
@@ -52,12 +78,13 @@ html(lang=config.language)
               span.total-number= site.categories.length
         #aside-block(style= asideBlock)
           block aside-block
-        footer
-          each content, title in theme.aside.copyright
-            nobr
-              span.text-title= title
-              span.text-content= content
-            wbr
+        footer(style=footerStyle)
+          if theme.aside.copyright !== null
+            each content, title in theme.aside.copyright
+              nobr
+                span.text-title= title
+                span.text-content= content
+              wbr
           wbr
           nobr published with&nbsp;
             a(href='http://hexo.io') Hexo&nbsp;
@@ -69,6 +96,7 @@ html(lang=config.language)
             a(href='https://github.com/Yue-plus') Yue_plus
     if theme.canvas_dust
       canvas#canvas-dust
+    script(src=config.root + "js/arknights.js")
     if theme.scripts !== undefined && theme.scripts.length > 0
       //- scripts list from config.yml
       each url in theme.scripts

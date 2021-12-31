@@ -4,10 +4,14 @@ language: zh
 # canvas 动态背景
 canvas_dust: true
 
-# 右侧边栏
+# <body> 背景图片链接
+background_image: https://ak.hypergryph.com/assets/index/images/ak/pc/bk.jpg # /img/bg.jpg
+
+# 侧边栏
 aside:
-  logo: https://ak.hypergryph.com/assets/index/images/ak/pc/faction/1.png #图片链接，建议 1:1 比例
-  dr: https://github.com/laurenfrost/ # 侧边栏 Dr. 链接
+  in_left: false # 侧边栏在左 true / false
+  logo: https://ak.hypergryph.com/assets/index/images/ak/pc/faction/1.png # 图片链接，建议 1:1 比例
+  dr: / # 侧边栏 Dr. 链接
   block_in_top: false # 目前为侧边栏文章目录置顶
   copyright: # 版权声明、备案号等
     ©: 2020 to ????
@@ -33,8 +37,26 @@ archives:
 
 # Valine 无后端评论系统
 valine:
+  enable: true
   app_id: uyrmyOMoruPODMfC9D5LwLLo-gzGzoHsz # <APP ID>
   app_key: WCEOpH3VI138eAxVITivdGSv # <APP KEY>
+
+gitalk:
+  enable: false
+  clientID: # GitHub Application Client ID
+  clientSecret: # GitHub Application Client Secret
+  repo: # GitHub repository
+  owner: # GitHub repository owner
+  admin: ["''"] # GitHub repository owner and collaborators (Users who having write access to this repository)
+                # Example: ["'adminA'","'adminB'"]
+  id: # The unique id of the page
+      # Example: location.pathname
+
+# 图表支持
+mermaid:
+  enable: false
+  version: '8.13.5'
+
 
 # main menu navigation
 menu:
@@ -45,10 +67,8 @@ menu:
 
 # stylesheets loaded in the <head>
 stylesheets:
-- /css/arknights.css
 - https://cdn.bootcdn.net/ajax/libs/highlight.js/10.1.2/styles/atom-one-dark-reasonable.min.css
 
 # scripts loaded in the end of the body
 scripts:
 - https://cdn.bootcdn.net/ajax/libs/highlight.js/10.1.2/highlight.min.js
-- /js/arknights.js
