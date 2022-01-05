@@ -39,11 +39,13 @@ GitHub Actions 只会执行相应 branch 里`.git/workflows/**`目录下的工�
 
 ### 可以执行 private 的 Actions
 
-尽管不是一项正式的用法，但 GitHub Actions 允许通过[`jobs.<job_id>.uses`](https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_iduses)加载写在 private 仓库里的 action。
+<s>尽管不是一项正式的用法</s>，但 GitHub Actions 允许通过[`jobs.<job_id>.uses`](https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_iduses)加载写在 private 仓库里的 action。
 
 `{owner}/{repo}/{path}/{filename}@{ref}`
 
-虽然除了“运行指定的`workflow.yaml`”之外，现在的官方文档中没有提及这个直接加载一个项目的功能。但根据 GitHub 社区的回答，曾经是有这个功能的。
+虽然除了“运行指定的`workflow.yaml`”之外，<s>现在的官方文档中没有提及这个直接加载一个项目的功能。但根据 GitHub 社区的回答，曾经是有这个功能的。</s> 现在这个功能又回来了，官方文档举了好几个例子来解释它的用法：
+
+[`jobs.<job_id>.steps[*].uses`](https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_idstepsuses)
 
 可以遵循以下[方法](https://github.community/t/github-action-action-in-private-repository/16063/28)：
 
@@ -75,7 +77,202 @@ jobs:
         uses: ./.github/actions/my-action 
 ```
 
+### GitHub Actions 运行 AWS ECR 容器
 
+之前一直用上面那个方法来执行一个 private 的 actions。但每次执行之前都需要`actions/checkout@v2`来 build 这个镜像，非常浪费时间。所以我希望能借助类似于 Docker Hub 的服务来存储我的镜像，使用的时候就可以直接 pull，这样就能节省 build 镜像的时间。
+
+考虑到我司已开通 AWS Elastic Container Registry 服务，我决定把这个 docker 放在 ECR 上。
+
+```yml
+jobs:
+  login:
+      runs-on: ubuntu-latest
+      outputs:
+        password: ${{ steps.get_password.outputs.password }}
+      steps:
+        - name: Configure AWS credentials
+          uses: aws-actions/configure-aws-credentials@v1
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEVELOPER }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEVELOPER }}
+            aws-region: ap-northeast-1
+        - id: get_password
+          run: echo "::set-output name=password::$(aws ecr get-login-password)"
+
+  db-gitops:
+      needs: login
+      runs-on: ubuntu-latest
+      container:
+        image: <aws-account-id>.dkr.ecr.ap-northeast-1.amazonaws.com/db-gitops:latest
+        credentials:
+          username: AWS
+          password: ${{ needs.login.outputs.password }}
+        env:
+          SECRETS_CONTEXT: ${{ toJson(secrets) }}
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEBUG_FLAG: true
+        options: --entrypoint "python3 src/main.py"
+      steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Run the container
+        run: |
+          python src/main.py
+```
+
+#### `jobs.<job_id>.container`的运行解释
+
+但实际执行过程中，我在 Dockerfile 里定义的 Enterpoint 根本没有被执行。我在`options`参数里指定`--entrypoint "python3 src/main.py"`也没有效果。更令人费解的是，执行`python src/main.py`的时候根本找不到`src/main.py`文件。
+
+我一度怀疑进入`steps`之后，整个程序进入了另一个由 repo 组成的 container 中。经过反复调试和分析日志，我意识到，是`steps`当前的位置有问题，它的`pwd`是`/__w/<repo-name>/<repo-name>`。
+
+大致的过程应该是这样的：
+
+1. 检查当前 docker 程序的版本
+
+    *workflow_run 环境*
+
+    ```bash
+    /usr/bin/docker version --format '{{.Server.APIVersion}}'
+    /usr/bin/docker version --format '{{.Client.APIVersion}}'
+    ```
+
+2. 清理前一个 job 的遗留，避免发生冲突
+
+    *workflow_run 环境*
+
+    ```bash
+    /usr/bin/docker ps --all --quiet --no-trunc --filter "label=<docker镜像的label>"
+    /usr/bin/docker network prune --force --filter "label=<docker镜像的label>"
+    ```
+
+3. 在本地新建一个给 container 用的虚拟网络
+
+    *workflow_run 环境*
+
+    ```bash
+    /usr/bin/docker network create --label <docker镜像的label> <要创建的虚拟网络id> 
+    ```
+
+4. Starting job container
+
+    *workflow_run 环境*
+
+    ```bash
+    # 登陆
+    /usr/bin/docker login ******.dkr.ecr.ap-northeast-1.amazonaws.com 
+      -u AWS 
+      --password-stdin
+      --config /home/runner/work/_temp/.docker_***
+    # 下载我在 ECR 上的镜像
+    /usr/bin/docker pull ******.dkr.ecr.ap-northeast-1.amazonaws.com/db-gitops:latest
+      --config /home/runner/work/_temp/.docker_***
+    # 从镜像中产生一个 container：5db618ea9ee2161e7954ff04c1b60cbd14048f59340db3233598fe861608dd4a
+    /usr/bin/docker create ******.dkr.ecr.ap-northeast-1.amazonaws.com/db-gitops:latest "-f" "/dev/null"
+      --name <新生成的container名> 
+      --label <docker镜像的label> 
+      --workdir /__w/<repo名>/<repo名> 
+      --network <刚才创建的虚拟网络id> 
+      --entrypoint "python3 src/main.py"
+        -e "HOME=/github/home" 
+        -e GITHUB_ACTIONS=true 
+        -e CI=true 
+        -v "/var/run/docker.sock":"/var/run/docker.sock" 
+        -v "/home/runner/work":"/__w" 
+        -v "/home/runner/runners/2.285.1/externals":"/__e":ro 
+        -v "/home/runner/work/_temp":"/__w/_temp" 
+        -v "/home/runner/work/_actions":"/__w/_actions" 
+        -v "/opt/hostedtoolcache":"/__t" 
+        -v "/home/runner/work/_temp/_github_home":"/github/home" 
+        -v "/home/runner/work/_temp/_github_workflow":"/github/workflow" 
+      --entrypoint "tail" 
+    # 开始刚才生成的那个 container
+    /usr/bin/docker start 5db618ea9ee2161e7954ff04c1b60cbd14048f59340db3233598fe861608dd4a
+    # 确认这个 container 有没有运行起来
+    /usr/bin/docker ps 
+      --all 
+      --filter id=5db618ea9ee2161e7954ff04c1b60cbd14048f59340db3233598fe861608dd4a 
+      --filter status=running 
+      --no-trunc 
+      --format "{{.ID}} {{.Status}}"
+    ```
+
+5. Waiting for all services to be ready
+
+    *workflow_run 环境*
+
+    没啥，就是 waiting
+
+6. 然后进入steps阶段
+
+    注意，现在进入了 *container 环境*
+
+    此时的`--workdir`就是`/__w/<repo名>/<repo名>`。所以如果我想执行我封装在镜像里的程序，我首先应该回到根目录！
+    ```yml
+    steps:
+      - name: Run my Python
+        run: |
+          cd /
+          python3 /src/main.py
+    ```
+
+#### 完整的`workflows.yml`
+
+```yml
+name: db-gitops
+
+on:
+  push:
+    branches:
+      - 'rds/**'
+      - '!rds/**_test'
+  create:
+    branches:
+      - 'rds/**'
+      - '!rds/**_test'
+  pull_request:
+    branches:
+     - 'rds/**_test'
+    types:
+     - opened
+     - reopened
+     - closed
+
+jobs:
+  login:
+      runs-on: ubuntu-latest
+      outputs:
+        password: ${{ steps.get_password.outputs.password }}
+      steps:
+        - name: Configure AWS credentials
+          uses: aws-actions/configure-aws-credentials@v1
+          with:
+            aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_DEVELOPER }}
+            aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEVELOPER }}
+            aws-region: ap-northeast-1
+        - id: get_password
+          run: echo "::set-output name=password::$(aws ecr get-login-password)"
+
+  db-gitops:
+      needs: login
+      runs-on: ubuntu-latest
+      container:
+        image: <aws-account-id>.dkr.ecr.ap-northeast-1.amazonaws.com/db-gitops:latest
+        credentials:
+          username: AWS
+          password: ${{ needs.login.outputs.password }}
+        env:
+          SECRETS_CONTEXT: ${{ toJson(secrets) }}
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEBUG_FLAG: true
+        options: --entrypoint "python3 src/main.py"
+      steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Run the container
+        run: |
+          python src/main.py
+```
 
 
 ## Trigger Events 归纳
