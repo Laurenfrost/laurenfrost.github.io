@@ -26,7 +26,7 @@ date: 2020-04-22 21:42:58
 
 \>[飞龙Project](https://feilongproject.com/)
 
-\>[小栗工作室](http://blog.ligzs.cn)
+\>[小栗工作室](https://b.ligzs.com/)
 
 \>[李拙诚的个人博客](http://www.heart-of-engine.top/)
   
