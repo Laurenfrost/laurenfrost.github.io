@@ -1,0 +1,266 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>GitHub Actions 笔记 | Frozen Sphere</title><script src="//unpkg.com/valine/dist/Valine.min.js"></script><link rel="stylesheet" href="/css/arknights.css"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/highlight.js/10.1.2/styles/atom-one-dark-reasonable.min.css"><style>@font-face {
+ font-family: BenderLight;
+ src: local('Bender'), url("/font/BenderLight.ttf");
+}
+@font-face {
+ font-family: 'JetBrains Mono';
+ src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
+}</style><meta name="generator" content="Hexo 5.0.2"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head><body style="background-image:url(https://ak.hypergryph.com/assets/index/images/ak/pc/bk.jpg);"><header><nav><a href="/.">Home</a><a href="/./archives/">Archives</a><a href="/./friends/">Friends</a><a href="/./about/">About</a></nav></header><main><article><div id="post-bg"><div id="post-title"><h1>GitHub Actions 笔记</h1><hr></div><div id="post-content"><p>这段时间里总是在跟 GitHub Actions 打交道。GitHub Actions 这个功能本身也在不断的迭代中，而且它的文档还有很多不完备的地方，导致我踩了很多坑。</p>
+<p>今日心血来潮，记录一下我能回忆起来的要点，以备日后使用。</p>
+<p><img src="./github-actions-flowchart-Page-2.drawio.png" alt="GitHub Actions 的执行逻辑"></p>
+<h2 id="踩坑记录"><a href="#踩坑记录" class="headerlink" title="踩坑记录"></a>踩坑记录</h2><h3 id="添加-workflows-文件要谨慎"><a href="#添加-workflows-文件要谨慎" class="headerlink" title="添加 workflows 文件要谨慎"></a>添加 workflows 文件要谨慎</h3><p>GitHub Actions 只会执行相应 branch 里<code>.git/workflows/**</code>目录下的工作流文件。这也就意味着：</p>
+<ol>
+<li><p>每一个需要执行 Actions 的 branch 都必须添加 相应的 workflows 文件。</p>
+</li>
+<li><p>一旦 workflows 需要变更，就必须变更所有 branch 里的每一个 workflows 文件，否则不同 branch 间的动作情况将会不一致，并且 Actions 的界面里触发的工作流将会分属不同的 workflows，进一步引发混乱。</p>
+</li>
+<li><p>workflows 文件中<a target="_blank" rel="noopener" href="https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#onpushpull_requestbranchestags"><code>on.&lt;push|pull_request&gt;.&lt;branches|tags&gt;</code></a>虽说可以指定由哪些 branch 来触发这个工作流，但这本质是个 filter，你首先得把它放到相应的 branch 里，让它变得能被触发才行。</p>
+<p> 就像这里 <a target="_blank" rel="noopener" href="https://github.community/t/github-action-trigger-a-workflow-from-another-branch/120770/3">Github Action: Trigger a workflow from another branch</a> 说的：</p>
+<blockquote>
+<p>We have no method to trigger a workflow in a branch by the push event occurs in another branch.</p>
+<p>Every workflow run has two important properties branch/tag ref (github.ref) and commit SHA (github.sha). Each workflow has only one branch/tag ref and only one commit SHA.</p>
+<p>When you push a new commit to the feat branch in your repository, generally GitHub will do the following things before triggering workflows.</p>
+<ol>
+<li><p>In the feat branch, check if there is any workflow file in the <strong>latest version (commit SHA)</strong> of the repository files. If no any workflow file, no workflow run will be triggered.</p>
+</li>
+<li><p>If find some existing workflow files, check the trigger events set in the workflow files. Whether the event names (github.event_name) have included push event, and the branches filter have includes feat branch. If no matched trigger events in the workflow files, no workflow run will be triggered.</p>
+</li>
+<li><p>If have matched trigger events in the workflow files, trigger the workflows that have the matched trigger events.</p>
+</li>
+</ol>
+</blockquote>
+</li>
+</ol>
+<h3 id="可以执行-private-的-Actions"><a href="#可以执行-private-的-Actions" class="headerlink" title="可以执行 private 的 Actions"></a>可以执行 private 的 Actions</h3><p><s>尽管不是一项正式的用法</s>，但 GitHub Actions 允许通过<a target="_blank" rel="noopener" href="https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_iduses"><code>jobs.&lt;job_id&gt;.uses</code></a>加载写在 private 仓库里的 action。</p>
+<p><code>&#123;owner&#125;/&#123;repo&#125;/&#123;path&#125;/&#123;filename&#125;@&#123;ref&#125;</code></p>
+<p>虽然除了“运行指定的<code>workflow.yaml</code>”之外，<s>现在的官方文档中没有提及这个直接加载一个项目的功能。但根据 GitHub 社区的回答，曾经是有这个功能的。</s> 现在这个功能又回来了，官方文档举了好几个例子来解释它的用法：</p>
+<p><a target="_blank" rel="noopener" href="https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_idstepsuses"><code>jobs.&lt;job_id&gt;.steps[*].uses</code></a></p>
+<p>可以遵循以下<a target="_blank" rel="noopener" href="https://github.community/t/github-action-action-in-private-repository/16063/28">方法</a>：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">name:</span> <span class="hljs-string">Awesome</span> <span class="hljs-string">Action</span> <span class="hljs-string">Example</span><br><br><span class="hljs-attr">on:</span><br>  <span class="hljs-attr">pull_request:</span><br>    <span class="hljs-attr">types:</span> [<span class="hljs-string">&#x27;opened&#x27;</span>, <span class="hljs-string">&#x27;edited&#x27;</span>, <span class="hljs-string">&#x27;reopened&#x27;</span>, <span class="hljs-string">&#x27;synchronize&#x27;</span>]<br><br><span class="hljs-attr">jobs:</span><br>  <span class="hljs-attr">awesome:</span><br>    <span class="hljs-attr">name:</span> <span class="hljs-string">Awesome</span> <span class="hljs-string">Action</span><br>    <span class="hljs-attr">runs-on:</span> <span class="hljs-string">ubuntu-latest</span><br>    <span class="hljs-attr">steps:</span><br>      <span class="hljs-comment"># checkout this repo</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Checkout</span> <span class="hljs-string">Repo</span><br>        <span class="hljs-attr">uses:</span> <span class="hljs-string">actions/checkout@v2</span><br><br>      <span class="hljs-comment"># checkout the private repo containing the action to run</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Checkout</span> <span class="hljs-string">GitHub</span> <span class="hljs-string">Action</span> <span class="hljs-string">Repo</span><br>        <span class="hljs-attr">uses:</span> <span class="hljs-string">actions/checkout@v2</span><br>        <span class="hljs-attr">with:</span><br>          <span class="hljs-attr">repository:</span> <span class="hljs-string">MyOrg/my-action</span><br>          <span class="hljs-attr">ref:</span> <span class="hljs-string">my-ref</span><br>          <span class="hljs-attr">token:</span> <span class="hljs-string">$&#123;&#123;</span> <span class="hljs-string">secrets.GITHUB_TOKEN</span> <span class="hljs-string">&#125;&#125;</span> <span class="hljs-comment"># stored in GitHub secrets</span><br>          <span class="hljs-attr">path:</span> <span class="hljs-string">.github/actions/my-action</span>  <span class="hljs-comment"># no need for path if actions.yml is in the root dir</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Run</span> <span class="hljs-string">My</span> <span class="hljs-string">Action</span><br>        <span class="hljs-attr">uses:</span> <span class="hljs-string">./.github/actions/my-action</span> <br></code></pre></td></tr></table></figure>
+
+<h3 id="GitHub-Actions-运行-AWS-ECR-容器"><a href="#GitHub-Actions-运行-AWS-ECR-容器" class="headerlink" title="GitHub Actions 运行 AWS ECR 容器"></a>GitHub Actions 运行 AWS ECR 容器</h3><p>之前一直用上面那个方法来执行一个 private 的 actions。但每次执行之前都需要<code>actions/checkout@v2</code>来 build 这个镜像，非常浪费时间。所以我希望能借助类似于 Docker Hub 的服务来存储我的镜像，使用的时候就可以直接 pull，这样就能节省 build 镜像的时间。</p>
+<p>考虑到我司已开通 AWS Elastic Container Registry 服务，我决定把这个 docker 放在 ECR 上。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs yml"><span class="hljs-attr">jobs:</span><br>  <span class="hljs-attr">login:</span><br>      <span class="hljs-attr">runs-on:</span> <span class="hljs-string">ubuntu-latest</span><br>      <span class="hljs-attr">outputs:</span><br>        <span class="hljs-attr">password:</span> <span class="hljs-string">$&#123;&#123;</span> <span class="hljs-string">steps.get_password.outputs.password</span> <span class="hljs-string">&#125;&#125;</span><br>      <span class="hljs-attr">steps:</span><br>        <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Configure</span> <span class="hljs-string">AWS</span> <span class="hljs-string">credentials</span><br>          <span class="hljs-attr">uses:</span> <span class="hljs-string">aws-actions/configure-aws-credentials@v1</span><br>          <span class="hljs-attr">with:</span><br>            <span class="hljs-attr">aws-access-key-id:</span> <span class="hljs-string">$&#123;&#123;</span> <span class="hljs-string">secrets.AWS_ACCESS_KEY_ID_DEVELOPER</span> <span class="hljs-string">&#125;&#125;</span><br>            <span class="hljs-attr">aws-secret-access-key:</span> <span class="hljs-string">$&#123;&#123;</span> <span class="hljs-string">secrets.AWS_SECRET_ACCESS_KEY_DEVELOPER</span> <span class="hljs-string">&#125;&#125;</span><br>            <span class="hljs-attr">aws-region:</span> <span class="hljs-string">ap-northeast-1</span><br>        <span class="hljs-bullet">-</span> <span class="hljs-attr">id:</span> <span class="hljs-string">get_password</span><br>          <span class="hljs-attr">run:</span> <span class="hljs-string">echo</span> <span class="hljs-string">&quot;::set-output name=password::$(aws ecr get-login-password)&quot;</span><br><br>  <span class="hljs-attr">db-gitops:</span><br>      <span class="hljs-attr">needs:</span> <span class="hljs-string">login</span><br>      <span class="hljs-attr">runs-on:</span> <span class="hljs-string">ubuntu-latest</span><br>      <span class="hljs-attr">container:</span><br>        <span class="hljs-attr">image:</span> <span class="hljs-string">&lt;aws-account-id&gt;.dkr.ecr.ap-northeast-1.amazonaws.com/db-gitops:latest</span><br>        <span class="hljs-attr">credentials:</span><br>          <span class="hljs-attr">username:</span> <span class="hljs-string">AWS</span><br>          <span class="hljs-attr">password:</span> <span class="hljs-string">$&#123;&#123;</span> <span class="hljs-string">needs.login.outputs.password</span> <span class="hljs-string">&#125;&#125;</span><br>        <span class="hljs-attr">env:</span><br>          <span class="hljs-attr">SECRETS_CONTEXT:</span> <span class="hljs-string">$&#123;&#123;</span> <span class="hljs-string">toJson(secrets)</span> <span class="hljs-string">&#125;&#125;</span><br>          <span class="hljs-attr">REPO_TOKEN:</span> <span class="hljs-string">$&#123;&#123;</span> <span class="hljs-string">secrets.GITHUB_TOKEN</span> <span class="hljs-string">&#125;&#125;</span><br>          <span class="hljs-attr">DEBUG_FLAG:</span> <span class="hljs-literal">true</span><br>        <span class="hljs-attr">options:</span> <span class="hljs-string">--entrypoint</span> <span class="hljs-string">&quot;python3 src/main.py&quot;</span><br>      <span class="hljs-attr">steps:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Check</span> <span class="hljs-string">out</span> <span class="hljs-string">the</span> <span class="hljs-string">repo</span><br>        <span class="hljs-attr">uses:</span> <span class="hljs-string">actions/checkout@v2</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Run</span> <span class="hljs-string">the</span> <span class="hljs-string">container</span><br>        <span class="hljs-attr">run:</span> <span class="hljs-string">|</span><br>          <span class="hljs-string">python</span> <span class="hljs-string">src/main.py</span><br></code></pre></td></tr></table></figure>
+
+<h4 id="jobs-lt-job-id-gt-container的运行解释"><a href="#jobs-lt-job-id-gt-container的运行解释" class="headerlink" title="jobs.&lt;job_id&gt;.container的运行解释"></a><code>jobs.&lt;job_id&gt;.container</code>的运行解释</h4><p>但实际执行过程中，我在 Dockerfile 里定义的 Enterpoint 根本没有被执行。我在<code>options</code>参数里指定<code>--entrypoint &quot;python3 src/main.py&quot;</code>也没有效果。更令人费解的是，执行<code>python src/main.py</code>的时候根本找不到<code>src/main.py</code>文件。</p>
+<p>我一度怀疑进入<code>steps</code>之后，整个程序进入了另一个由 repo 组成的 container 中。经过反复调试和分析日志，我意识到，是<code>steps</code>当前的位置有问题，它的<code>pwd</code>是<code>/__w/&lt;repo-name&gt;/&lt;repo-name&gt;</code>。</p>
+<p>大致的过程应该是这样的：</p>
+<ol>
+<li><p>检查当前 docker 程序的版本</p>
+<p> <em>workflow_run 环境</em></p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">/usr/bin/docker version --format <span class="hljs-string">&#x27;&#123;&#123;.Server.APIVersion&#125;&#125;&#x27;</span><br>/usr/bin/docker version --format <span class="hljs-string">&#x27;&#123;&#123;.Client.APIVersion&#125;&#125;&#x27;</span><br></code></pre></td></tr></table></figure>
+</li>
+<li><p>清理前一个 job 的遗留，避免发生冲突</p>
+<p> <em>workflow_run 环境</em></p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">/usr/bin/docker ps --all --quiet --no-trunc --filter <span class="hljs-string">&quot;label=&lt;docker镜像的label&gt;&quot;</span><br>/usr/bin/docker network prune --force --filter <span class="hljs-string">&quot;label=&lt;docker镜像的label&gt;&quot;</span><br></code></pre></td></tr></table></figure>
+</li>
+<li><p>在本地新建一个给 container 用的虚拟网络</p>
+<p> <em>workflow_run 环境</em></p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">/usr/bin/docker network create --label &lt;docker镜像的label&gt; &lt;要创建的虚拟网络id&gt; <br></code></pre></td></tr></table></figure>
+</li>
+<li><p>Starting job container</p>
+<p> <em>workflow_run 环境</em></p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 登陆</span><br>/usr/bin/docker login ******.dkr.ecr.ap-northeast-1.amazonaws.com <br>  -u AWS <br>  --password-stdin<br>  --config /home/runner/work/_temp/.docker_***<br><span class="hljs-comment"># 下载我在 ECR 上的镜像</span><br>/usr/bin/docker pull ******.dkr.ecr.ap-northeast-1.amazonaws.com/db-gitops:latest<br>  --config /home/runner/work/_temp/.docker_***<br><span class="hljs-comment"># 从镜像中产生一个 container：5db618ea9ee2161e7954ff04c1b60cbd14048f59340db3233598fe861608dd4a</span><br>/usr/bin/docker create ******.dkr.ecr.ap-northeast-1.amazonaws.com/db-gitops:latest <span class="hljs-string">&quot;-f&quot;</span> <span class="hljs-string">&quot;/dev/null&quot;</span><br>  --name &lt;新生成的container名&gt; <br>  --label &lt;docker镜像的label&gt; <br>  --workdir /__w/&lt;repo名&gt;/&lt;repo名&gt; <br>  --network &lt;刚才创建的虚拟网络id&gt; <br>  --entrypoint <span class="hljs-string">&quot;python3 src/main.py&quot;</span><br>    -e <span class="hljs-string">&quot;HOME=/github/home&quot;</span> <br>    -e GITHUB_ACTIONS=<span class="hljs-literal">true</span> <br>    -e CI=<span class="hljs-literal">true</span> <br>    -v <span class="hljs-string">&quot;/var/run/docker.sock&quot;</span>:<span class="hljs-string">&quot;/var/run/docker.sock&quot;</span> <br>    -v <span class="hljs-string">&quot;/home/runner/work&quot;</span>:<span class="hljs-string">&quot;/__w&quot;</span> <br>    -v <span class="hljs-string">&quot;/home/runner/runners/2.285.1/externals&quot;</span>:<span class="hljs-string">&quot;/__e&quot;</span>:ro <br>    -v <span class="hljs-string">&quot;/home/runner/work/_temp&quot;</span>:<span class="hljs-string">&quot;/__w/_temp&quot;</span> <br>    -v <span class="hljs-string">&quot;/home/runner/work/_actions&quot;</span>:<span class="hljs-string">&quot;/__w/_actions&quot;</span> <br>    -v <span class="hljs-string">&quot;/opt/hostedtoolcache&quot;</span>:<span class="hljs-string">&quot;/__t&quot;</span> <br>    -v <span class="hljs-string">&quot;/home/runner/work/_temp/_github_home&quot;</span>:<span class="hljs-string">&quot;/github/home&quot;</span> <br>    -v <span class="hljs-string">&quot;/home/runner/work/_temp/_github_workflow&quot;</span>:<span class="hljs-string">&quot;/github/workflow&quot;</span> <br>  --entrypoint <span class="hljs-string">&quot;tail&quot;</span> <br><span class="hljs-comment"># 开始刚才生成的那个 container</span><br>/usr/bin/docker start 5db618ea9ee2161e7954ff04c1b60cbd14048f59340db3233598fe861608dd4a<br><span class="hljs-comment"># 确认这个 container 有没有运行起来</span><br>/usr/bin/docker ps <br>  --all <br>  --filter id=5db618ea9ee2161e7954ff04c1b60cbd14048f59340db3233598fe861608dd4a <br>  --filter status=running <br>  --no-trunc <br>  --format <span class="hljs-string">&quot;&#123;&#123;.ID&#125;&#125; &#123;&#123;.Status&#125;&#125;&quot;</span><br></code></pre></td></tr></table></figure>
+</li>
+<li><p>Waiting for all services to be ready</p>
+<p> <em>workflow_run 环境</em></p>
+<p> 没啥，就是 waiting</p>
+</li>
+<li><p>然后进入steps阶段</p>
+<p> 注意，现在进入了 <em>container 环境</em></p>
+<p> 此时的<code>--workdir</code>就是<code>/__w/&lt;repo名&gt;/&lt;repo名&gt;</code>。所以如果我想执行我封装在镜像里的程序，我首先应该回到根目录！</p>
+ <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs yml"><span class="hljs-attr">steps:</span><br>  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Run</span> <span class="hljs-string">my</span> <span class="hljs-string">Python</span><br>    <span class="hljs-attr">run:</span> <span class="hljs-string">|</span><br>      <span class="hljs-string">cd</span> <span class="hljs-string">/</span><br>      <span class="hljs-string">python3</span> <span class="hljs-string">/src/main.py</span><br></code></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<h4 id="完整的workflows-yml"><a href="#完整的workflows-yml" class="headerlink" title="完整的workflows.yml"></a>完整的<code>workflows.yml</code></h4><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><code class="hljs yml"><span class="hljs-attr">name:</span> <span class="hljs-string">db-gitops</span><br><br><span class="hljs-attr">on:</span><br>  <span class="hljs-attr">push:</span><br>    <span class="hljs-attr">branches:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&#x27;rds/**&#x27;</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&#x27;!rds/**_test&#x27;</span><br>  <span class="hljs-attr">create:</span><br>    <span class="hljs-attr">branches:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&#x27;rds/**&#x27;</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&#x27;!rds/**_test&#x27;</span><br>  <span class="hljs-attr">pull_request:</span><br>    <span class="hljs-attr">branches:</span><br>     <span class="hljs-bullet">-</span> <span class="hljs-string">&#x27;rds/**_test&#x27;</span><br>    <span class="hljs-attr">types:</span><br>     <span class="hljs-bullet">-</span> <span class="hljs-string">opened</span><br>     <span class="hljs-bullet">-</span> <span class="hljs-string">reopened</span><br>     <span class="hljs-bullet">-</span> <span class="hljs-string">closed</span><br><br><span class="hljs-attr">jobs:</span><br>  <span class="hljs-attr">login:</span><br>      <span class="hljs-attr">runs-on:</span> <span class="hljs-string">ubuntu-latest</span><br>      <span class="hljs-attr">outputs:</span><br>        <span class="hljs-attr">password:</span> <span class="hljs-string">$&#123;&#123;</span> <span class="hljs-string">steps.get_password.outputs.password</span> <span class="hljs-string">&#125;&#125;</span><br>      <span class="hljs-attr">steps:</span><br>        <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Configure</span> <span class="hljs-string">AWS</span> <span class="hljs-string">credentials</span><br>          <span class="hljs-attr">uses:</span> <span class="hljs-string">aws-actions/configure-aws-credentials@v1</span><br>          <span class="hljs-attr">with:</span><br>            <span class="hljs-attr">aws-access-key-id:</span> <span class="hljs-string">$&#123;&#123;</span> <span class="hljs-string">secrets.AWS_ACCESS_KEY_ID_DEVELOPER</span> <span class="hljs-string">&#125;&#125;</span><br>            <span class="hljs-attr">aws-secret-access-key:</span> <span class="hljs-string">$&#123;&#123;</span> <span class="hljs-string">secrets.AWS_SECRET_ACCESS_KEY_DEVELOPER</span> <span class="hljs-string">&#125;&#125;</span><br>            <span class="hljs-attr">aws-region:</span> <span class="hljs-string">ap-northeast-1</span><br>        <span class="hljs-bullet">-</span> <span class="hljs-attr">id:</span> <span class="hljs-string">get_password</span><br>          <span class="hljs-attr">run:</span> <span class="hljs-string">echo</span> <span class="hljs-string">&quot;::set-output name=password::$(aws ecr get-login-password)&quot;</span><br><br>  <span class="hljs-attr">db-gitops:</span><br>      <span class="hljs-attr">needs:</span> <span class="hljs-string">login</span><br>      <span class="hljs-attr">runs-on:</span> <span class="hljs-string">ubuntu-latest</span><br>      <span class="hljs-attr">container:</span><br>        <span class="hljs-attr">image:</span> <span class="hljs-string">&lt;aws-account-id&gt;.dkr.ecr.ap-northeast-1.amazonaws.com/db-gitops:latest</span><br>        <span class="hljs-attr">credentials:</span><br>          <span class="hljs-attr">username:</span> <span class="hljs-string">AWS</span><br>          <span class="hljs-attr">password:</span> <span class="hljs-string">$&#123;&#123;</span> <span class="hljs-string">needs.login.outputs.password</span> <span class="hljs-string">&#125;&#125;</span><br>        <span class="hljs-attr">env:</span><br>          <span class="hljs-attr">SECRETS_CONTEXT:</span> <span class="hljs-string">$&#123;&#123;</span> <span class="hljs-string">toJson(secrets)</span> <span class="hljs-string">&#125;&#125;</span><br>          <span class="hljs-attr">REPO_TOKEN:</span> <span class="hljs-string">$&#123;&#123;</span> <span class="hljs-string">secrets.GITHUB_TOKEN</span> <span class="hljs-string">&#125;&#125;</span><br>          <span class="hljs-attr">DEBUG_FLAG:</span> <span class="hljs-literal">true</span><br>        <span class="hljs-attr">options:</span> <span class="hljs-string">--entrypoint</span> <span class="hljs-string">&quot;python3 src/main.py&quot;</span><br>      <span class="hljs-attr">steps:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Check</span> <span class="hljs-string">out</span> <span class="hljs-string">the</span> <span class="hljs-string">repo</span><br>        <span class="hljs-attr">uses:</span> <span class="hljs-string">actions/checkout@v2</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Run</span> <span class="hljs-string">the</span> <span class="hljs-string">container</span><br>        <span class="hljs-attr">run:</span> <span class="hljs-string">|</span><br>          <span class="hljs-string">python</span> <span class="hljs-string">src/main.py</span><br></code></pre></td></tr></table></figure>
+
+
+<h2 id="Trigger-Events-归纳"><a href="#Trigger-Events-归纳" class="headerlink" title="Trigger Events 归纳"></a>Trigger Events 归纳</h2><p>记录一下不同操作所触发的事件。</p>
+<table>
+<thead>
+<tr>
+<th>用户的操作</th>
+<th>触发的事件</th>
+<th>活动类型</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>创建PR</td>
+<td><code>pull_request</code></td>
+<td><code>opened</code></td>
+<td></td>
+</tr>
+<tr>
+<td>关闭PR</td>
+<td><code>pull_request</code></td>
+<td><code>closed</code></td>
+<td></td>
+</tr>
+<tr>
+<td>重开PR</td>
+<td><code>pull_request</code></td>
+<td><code>reopened</code></td>
+<td></td>
+</tr>
+<tr>
+<td>分配任务</td>
+<td><code>pull_request</code></td>
+<td><code>assigned</code></td>
+<td></td>
+</tr>
+<tr>
+<td>指定reviewer</td>
+<td><code>pull_request</code></td>
+<td><code>review_requested</code></td>
+<td></td>
+</tr>
+<tr>
+<td>reviewer通过代码</td>
+<td>``</td>
+<td>``</td>
+<td></td>
+</tr>
+<tr>
+<td>reviewer拒绝通过</td>
+<td>``</td>
+<td>``</td>
+<td></td>
+</tr>
+<tr>
+<td>合并分支</td>
+<td>1. <code>pull_request</code><br>2. <code>push</code></td>
+<td><code>closed</code><br>n/a</td>
+<td>先后触发了两个事件</td>
+</tr>
+<tr>
+<td>创建分支</td>
+<td>1. <code>create</code><br>2. <code>push</code></td>
+<td>n/a<br>n/a</td>
+<td>先后触发了两个事件</td>
+</tr>
+</tbody></table>
+<div id="paginator"></div></div><div id="post-footer"><hr><a href="/2021/12/30/multiple-time-frame-analysis/">← Prev Multiple Time Frame Analysis</a><span style="color: #fe2"> | </span><a href="/2021/09/26/yet-another-lamp/">台灯需求畅想 Next →</a><hr></div><div id="bottom-btn"><a id="to-index" href="#post-index" title="index">≡</a><a id="to-top" href="#post-title" title="to top">∧</a></div><div id="Valine"></div><script>new Valine({
+ el: '#Valine'
+ , appId: 'uyrmyOMoruPODMfC9D5LwLLo-gzGzoHsz'
+ , appKey: 'WCEOpH3VI138eAxVITivdGSv'
+ , placeholder: '此条评论委托企鹅物流发送'
+})</script></div></article><aside><div id="about"><a href="/" id="logo"><img src="https://ak.hypergryph.com/assets/index/images/ak/pc/faction/1.png" alt="Logo"></a><h1 id="Dr"><a href="/"> Dr.Laurenfrost</a></h1><section id="total"><a id="total-archives" href="/archives"><span class="total-title">Archives Total:</span><span class="total-number">19</span></a><div id="total-tags"><span class="total-title">Tags:</span><span class="total-number">17</span></div><div id="total-categories"><span class="total-title">Categories:</span><span class="total-number">10</span></div></section></div><div id="aside-block"><h1>INDEX</h1><div id="post-index"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95"><span class="toc-number">1.</span> <span class="toc-text">踩坑记录</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0-workflows-%E6%96%87%E4%BB%B6%E8%A6%81%E8%B0%A8%E6%85%8E"><span class="toc-number">1.1.</span> <span class="toc-text">添加 workflows 文件要谨慎</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E4%BB%A5%E6%89%A7%E8%A1%8C-private-%E7%9A%84-Actions"><span class="toc-number">1.2.</span> <span class="toc-text">可以执行 private 的 Actions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#GitHub-Actions-%E8%BF%90%E8%A1%8C-AWS-ECR-%E5%AE%B9%E5%99%A8"><span class="toc-number">1.3.</span> <span class="toc-text">GitHub Actions 运行 AWS ECR 容器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#jobs-lt-job-id-gt-container%E7%9A%84%E8%BF%90%E8%A1%8C%E8%A7%A3%E9%87%8A"><span class="toc-number">1.3.1.</span> <span class="toc-text">jobs.&lt;job_id&gt;.container的运行解释</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4%E7%9A%84workflows-yml"><span class="toc-number">1.3.2.</span> <span class="toc-text">完整的workflows.yml</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Trigger-Events-%E5%BD%92%E7%BA%B3"><span class="toc-number">2.</span> <span class="toc-text">Trigger Events 归纳</span></a></li></ol></div></div><footer><nobr><span class="text-title">©</span><span class="text-content">2020 to ????</span></nobr><wbr><nobr><span class="text-title">ICP</span><span class="text-content">备案个屁</span></nobr><wbr><nobr><span class="text-title">Auther</span><span class="text-content">Laurenfrost</span></nobr><wbr><wbr><nobr>published with&nbsp;<a target="_blank" rel="noopener" href="http://hexo.io">Hexo&nbsp;</a></nobr><wbr><nobr>Theme&nbsp;<a target="_blank" rel="noopener" href="https://github.com/Yue-plus/hexo-theme-arknights">Arknight&nbsp;</a></nobr><wbr><nobr>by&nbsp;<a target="_blank" rel="noopener" href="https://github.com/Yue-plus">Yue_plus</a></nobr></footer></aside></main><canvas id="canvas-dust"></canvas><script src="/js/arknights.js"></script><script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script></body></html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>BLE协议栈简介 | Frozen Sphere</title><script src="//unpkg.com/valine/dist/Valine.min.js"></script><link rel="stylesheet" href="/css/arknights.css"><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/highlight.js/10.1.2/styles/atom-one-dark-reasonable.min.css"><style>@font-face {
+ font-family: BenderLight;
+ src: local('Bender'), url("/font/BenderLight.ttf");
+}
+@font-face {
+ font-family: 'JetBrains Mono';
+ src: local('JetBrains Mono'), url('/font/JetBrainsMono-Regular.woff2') format('woff2');
+}</style><meta name="generator" content="Hexo 5.0.2"><style>mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+.MathJax path {
+  stroke-width: 3;
+}
+
+mjx-container[display="true"] {
+  overflow: auto hidden;
+}
+
+mjx-container[display="true"] + br {
+  display: none;
+}
+</style></head><body style="background-image:url(https://ak.hypergryph.com/assets/index/images/ak/pc/bk.jpg);"><header><nav><a href="/.">Home</a><a href="/./archives/">Archives</a><a href="/./friends/">Friends</a><a href="/./about/">About</a></nav></header><main><article><div id="post-bg"><div id="post-title"><h1>BLE协议栈简介</h1><hr></div><div id="post-content"><p>TI的协议栈分为两部分：控制器和主机。<br>对于4.0以前的蓝牙，这两部分是分开的。所有profile和应用都建构在GAP或GATT之上。根据这张图，我们从底层开始介绍。TI的这款CC2540器件可以单芯片实现BLE蓝牙协议栈结构图的所有组件，包括应用程序。  </p>
+<p><img src="ble-profile-overlook.jpg">  </p>
+<ol>
+<li>PHY层  <ul>
+<li>1Mbps自适应跳频GFSK（高斯频移键控），运行在免证的2.4GHz。  </li>
+</ul>
+</li>
+<li>LL层  <ul>
+<li>LL层为RF控制器，控制设备处于准备（standby）、广播、监听/扫描（scan）、初始化、连接，这五种状态中的一种。五种状态切换描述为：未连接时，设备广播信息，另外一个设备一直监听或按需扫描，两个设备连接初始化，设备连接上了。发起聊天的设备为主设备，接受聊天的设备为从设备，同一次聊天只能有一个意见领袖，即主设备和从设备不能切换。  </li>
+</ul>
+</li>
+<li>HCI层  <ul>
+<li>HCI层为接口层，向上为主机提供软件应用程序接口（API），对外为外部硬件控制接口，可以通过串口、SPI、USB来实现设备控制。  </li>
+</ul>
+</li>
+<li>L2CAP层  <ul>
+<li>L2CAP层提供数据封装服务，允许逻辑上的点对点通讯。  </li>
+</ul>
+</li>
+<li>SM层  <ul>
+<li>SM层提供配对和密匙分发，实现安全连接和数据交换。  </li>
+</ul>
+</li>
+<li>ATT层  <ul>
+<li>ATT层负责数据检索，允许设备向另外一个设备展示一块特定的数据称之为属性，在ATT环境中，展示属性的设备称之为服务器，与它配对的设备称之为客户端。链路层的主机从机和这里的服务器、客服端是两种概念，主设备既可以是服务器，也可以是客户端。从设备亦然。  </li>
+</ul>
+</li>
+<li>GATT层  <ul>
+<li>GATT层定义了使用ATT的服务框架和配置文件（profiles）的结构。BLE 中所有的数据通信都需要经过GATT。GATT负责处理向上与应用打交道，其关键工作是把为检索工作提供合适的profile结构，而profile由检索关键词（characteristics）组成。  </li>
+</ul>
+</li>
+<li>GAP层  <ul>
+<li>GAP直接与应用程序或配置文件（profiles）通信的接口，处理设备发现和连接相关服务。另外还处理安全特性的初始化。对上级，提供应用程序接口，对下级，管理各级职能部门，尤其是指示LL层控制室五种状态切换，指导保卫处做好机要工作。  </li>
+</ul>
+</li>
+</ol>
+<p>TI给出了很多Demo，这些例程都是经过了SIG评审的，ble 文件夹中有很多工程文件，有些是具体的应用，例如BloodPressure、GlucoseCollector 、GlucoseSensor 、 HeartRate 、HIDEmuKbd 等都为传感器的实际应用，有相应标准的 Profile。<br>其中有4种角色： SimpleBLEBroadcaster 、 SimpleBLECentral 、SimpleBLEObserver、SimpleBLEPeripheral。他们都有自己的特点。  </p>
+<ol>
+<li>Broadcaster 广播员<ul>
+<li>非连接性的信号装置</li>
+</ul>
+</li>
+<li>Observer 观察者<ul>
+<li>扫描得到，但不能链接</li>
+</ul>
+</li>
+<li>Peripheral 从机<ul>
+<li>可链接，在单个链路层链接中作为从机</li>
+</ul>
+</li>
+<li>Central 主机<ul>
+<li>扫描设备并发起链接，在单链路层或多链路层中作为主机</li>
+</ul>
+</li>
+</ol>
+<div id="paginator"></div></div><div id="post-footer"><hr><a href="/2020/01/11/intro-to-lvds/">← Prev 浅谈LVDS</a><span style="color: #fe2"> | </span><a href="/2017/07/12/mpi-learning/">MPI学习 Next →</a><hr></div><div id="bottom-btn"><a id="to-top" href="#post-title" title="to top">∧</a></div><div id="Valine"></div><script>new Valine({
+ el: '#Valine'
+ , appId: 'uyrmyOMoruPODMfC9D5LwLLo-gzGzoHsz'
+ , appKey: 'WCEOpH3VI138eAxVITivdGSv'
+ , placeholder: '此条评论委托企鹅物流发送'
+})</script></div></article><aside><div id="about"><a href="/" id="logo"><img src="https://ak.hypergryph.com/assets/index/images/ak/pc/faction/1.png" alt="Logo"></a><h1 id="Dr"><a href="/"> Dr.Laurenfrost</a></h1><section id="total"><a id="total-archives" href="/archives"><span class="total-title">Archives Total:</span><span class="total-number">19</span></a><div id="total-tags"><span class="total-title">Tags:</span><span class="total-number">17</span></div><div id="total-categories"><span class="total-title">Categories:</span><span class="total-number">10</span></div></section></div><div id="aside-block"></div><footer><nobr><span class="text-title">©</span><span class="text-content">2020 to ????</span></nobr><wbr><nobr><span class="text-title">ICP</span><span class="text-content">备案个屁</span></nobr><wbr><nobr><span class="text-title">Auther</span><span class="text-content">Laurenfrost</span></nobr><wbr><wbr><nobr>published with&nbsp;<a target="_blank" rel="noopener" href="http://hexo.io">Hexo&nbsp;</a></nobr><wbr><nobr>Theme&nbsp;<a target="_blank" rel="noopener" href="https://github.com/Yue-plus/hexo-theme-arknights">Arknight&nbsp;</a></nobr><wbr><nobr>by&nbsp;<a target="_blank" rel="noopener" href="https://github.com/Yue-plus">Yue_plus</a></nobr></footer></aside></main><canvas id="canvas-dust"></canvas><script src="/js/arknights.js"></script><script src="https://cdn.bootcdn.net/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script></body></html>
